@@ -1,10 +1,11 @@
 ---
 title: nginx
+author: wuxinheng
 date: 2022-07-11 20:32:35
 tags:
-- 代理
-- 负载均衡
-- ssl
+- nginx代理
+- nginx负载均衡
+- nginx配置ssl
 categories:
 - nginx
 ---
