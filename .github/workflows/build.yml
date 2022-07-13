@@ -1,0 +1,30 @@
+name: 'build_docker_image'
+
+on:
+    release:  
+      types: [published]
+
+jobs:
+  push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checks-out repository
+        uses: actions/checkout@v3
+      - name: build nginx-hexo image
+        run: |
+          npm install
+          npm install hexo-cli -g
+          # 运行 hexo generate 命令生成静态网站
+          hexo generate
+          docker run --restart=always --name nginx-hexo-blog -d -p 80:80 nginx:1.23.0
+          docker ps
+          ls
+          pwd
+          docker cp /home/runner/work/hexo-blog/hexo-blog/public/. nginx-hexo-blog:/usr/share/nginx/html
+          docker restart nginx-hexo-blog
+          docker login -u ${{ secrets.HARBOR_NAME }} -p ${{ secrets.HARBOR_PASSWORD }}  https://${{ secrets.HARBOR_SERVER }}
+          TAG=`git describe --tags`
+          docker commit -m="use nginx deploy hexo-blog" -a="wuxinheng" nginx-hexo-blog ${{ secrets.HARBOR_SERVER }}/${{ secrets.HARBOR_PROJECT }}/hexo-blog:${TAG}
+          docker images
+          docker push ${{ secrets.HARBOR_SERVER }}/${{ secrets.HARBOR_PROJECT }}/hexo-blog:${TAG}
+          docker logout `https://${{secrets.HARBOR_SERVER}}`

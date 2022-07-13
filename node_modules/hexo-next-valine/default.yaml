@@ -1,0 +1,18 @@
+# Valine
+# For more information: https://valine.js.org, https://github.com/xCss/Valine
+valine:
+  enable: false
+  appId: # Your leancloud application appid
+  appKey: # Your leancloud application appkey
+  serverURLs: # When the custom domain name is enabled, fill it in here
+  placeholder: Just go go # Comment box placeholder
+  avatar: mm # Gravatar style
+  meta: [nick, mail, link] # Custom comment header
+  pageSize: 10 # Pagination size
+  lang: # Language, available values: en, zh-cn
+  # Warning: Do not enable both `valine.visitor` and `leancloud_visitors`.
+  visitor: false # Article reading statistic
+  comment_count: true # If false, comment count will only be displayed in post page, not in home page
+  recordIP: false # Whether to record the commenter IP
+  enableQQ: false # Whether to enable the Nickname box to automatically get QQ Nickname and QQ Avatar
+  requiredFields: [] # Set required fields: [nick] | [nick, mail]
