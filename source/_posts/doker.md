@@ -1,9 +1,11 @@
 ---
-title: doker
+title: doker使用
 author: wuxinheng
-date: 2022-07-14 22:45:41
 categories:
-- docker
+  - docker
+tags: 
+  - docker
+date: 2022-07-14 22:45:00
 ---
 
 # docker

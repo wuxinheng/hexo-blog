@@ -1,5 +1,5 @@
 ---
-title: jenkins
+title: jenkins使用
 author: wuxinheng
 date: 2022-07-13 22:21:14
 tags:
@@ -8,6 +8,7 @@ tags:
 - jenkis部署.netcore
 - jenkis部署uniapp
 - uniapp自动推送微信
+- jenkis
 categories:
 - jenkins
 ---

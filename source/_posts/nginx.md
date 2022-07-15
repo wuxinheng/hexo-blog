@@ -1,11 +1,12 @@
 ---
-title: nginx
+title: nginx使用
 author: wuxinheng
 date: 2022-07-11 20:32:35
 tags:
 - nginx代理
 - nginx负载均衡
 - nginx配置ssl
+- docker
 categories:
 - nginx
 ---
