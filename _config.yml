@@ -132,3 +132,10 @@ admin:
   username: admin
   password_hash: $2a$10$sFd22SrWacK.m2FsqG/LoeydCGPl4WPYzp7fAMmdOOOxZF2t0IoQW
   secret: qwertyuiop
+
+# Local Search搜索功能
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
