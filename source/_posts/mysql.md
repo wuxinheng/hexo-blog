@@ -1,6 +1,7 @@
 ---
 title: 在docker中部署mysql
 author: wuxinheng
+description: 本文介绍了centos docker部署持久化mysql。
 date: 2022-07-15 20:48:00
 tags:
 - mysql

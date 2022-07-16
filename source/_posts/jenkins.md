@@ -1,6 +1,7 @@
 ---
 title: jenkins使用
 author: wuxinheng
+description: 本文介绍了centos docker和windows中安装jenkins,以及具体的使用。
 date: 2022-07-13 22:21:14
 tags:
 - CI/CD

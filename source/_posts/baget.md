@@ -1,5 +1,6 @@
 ---
 title: 在docker中部署私有化NuGet
+description: 本文介绍了如何在docker中部署私有化nuget。已经nuget使用
 author: wuxinheng
 date: 2022-07-15 20:48:00
 tags:

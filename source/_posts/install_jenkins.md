@@ -1,17 +1,18 @@
 ---
 title: centos一键安装jenkins
+description: 在centos中通过执行shell脚本自动化在docker部署jenkins
 author: wuxinheng
-date: 2022-07-15 22:59:14
 tags:
-- jenkins
-- shell
-- 脚本
-- sh
-- docker
-- deploy
-- jenkis
+  - docker
+  - jenkins
+  - shell
+  - 脚本
+  - sh
+  - deploy
+  - jenkis
 categories:
-- jenkins
+  - jenkins
+date: 2022-07-15 22:59:00
 ---
 
 ## jenkins

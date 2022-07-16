@@ -1,6 +1,7 @@
 ---
 title: nginx使用
 author: wuxinheng
+description: 本文说明了nginx的使用和如何部署，怎么进行负载均衡、ssl设置。
 date: 2022-07-11 20:32:35
 tags:
 - nginx代理

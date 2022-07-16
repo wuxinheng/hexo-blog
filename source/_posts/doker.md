@@ -1,13 +1,13 @@
 ---
 title: doker使用
 author: wuxinheng
+description: 本文从具体使用角度简单介绍了如何去使用docker
 categories:
   - docker
-tags: 
+tags:
   - docker
 date: 2022-07-14 22:45:00
 ---
-
 # docker
 
 ## 安装
@@ -122,6 +122,11 @@ sudo docker version
 
     ```shell
     docker run -v [host-src]:[container-src]
+    ```
+    > 容器与主机文件交互
+    ```shell
+    docker cp <host-src> <containerId/containerName>:<container-src>
+    docker cp <containerId/containerName>:<container-src> <host-src> 
     ```
 
   - 容器重启策略
