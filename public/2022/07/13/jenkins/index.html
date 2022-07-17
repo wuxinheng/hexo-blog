@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#50616d" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#50616d" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#50616d">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.12.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文介绍了centos docker和windows中安装jenkins,以及具体的使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jenkins使用">
+<meta property="og:url" content="http://example.com/2022/07/13/jenkins/index.html">
+<meta property="og:site_name" content="xblogs">
+<meta property="og:description" content="本文介绍了centos docker和windows中安装jenkins,以及具体的使用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-13T14:21:14.000Z">
+<meta property="article:modified_time" content="2022-07-16T12:46:15.409Z">
+<meta property="article:author" content="wuxinheng">
+<meta property="article:tag" content="jenkis">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta property="article:tag" content="docker构建jenkins">
+<meta property="article:tag" content="jenkis部署.netcore">
+<meta property="article:tag" content="jenkis部署uniapp">
+<meta property="article:tag" content="uniapp自动推送微信">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/07/13/jenkins/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/07/13/jenkins/","path":"2022/07/13/jenkins/","title":"jenkins使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>jenkins使用 | xblogs</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xblogs</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">随便写写</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">33</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#docker%E6%9E%84%E5%BB%BAjenkins-%E5%AE%B9%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">docker构建jenkins 容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#jenkins-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">jenkins 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">拉取镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">构建容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bjenkins%E5%AF%86%E7%A0%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">查看jenkins密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%8F%8A%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.4.</span> <span class="nav-text">使用及问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2-net-core"><span class="nav-number">1.1.5.</span> <span class="nav-text">自动化部署.net core</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Windows%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">Windows安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.1.</span> <span class="nav-text">使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2-net-core"><span class="nav-number">2.1.1.</span> <span class="nav-text">自动部署.net core</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uniapp%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85%E6%8E%A8%E9%80%81%E5%BE%AE%E4%BF%A1%E5%B9%B3%E5%8F%B0"><span class="nav-number">2.1.2.</span> <span class="nav-text">uniapp自动打包推送微信平台</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wuxinheng"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">wuxinheng</p>
+  <div class="site-description" itemprop="description">不积硅步无以至千里,不积小流无以成江海</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:17629957093@163.com" title="E-Mail → mailto:17629957093@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="gitee → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-git fa-fw"></i>gitee</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/13/jenkins/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="wuxinheng">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xblogs">
+      <meta itemprop="description" content="不积硅步无以至千里,不积小流无以成江海">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="jenkins使用 | xblogs">
+      <meta itemprop="description" content="本文介绍了centos docker和windows中安装jenkins,以及具体的使用。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          jenkins使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-13 22:21:14" itemprop="dateCreated datePublished" datetime="2022-07-13T22:21:14+08:00">2022-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-07-16 20:46:15" itemprop="dateModified" datetime="2022-07-16T20:46:15+08:00">2022-07-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">本文介绍了centos docker和windows中安装jenkins,以及具体的使用。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="docker构建jenkins-容器"><a href="#docker构建jenkins-容器" class="headerlink" title="docker构建jenkins 容器"></a><code>docker</code>构建<code>jenkins</code> 容器</h1><h2 id="jenkins-安装"><a href="#jenkins-安装" class="headerlink" title="jenkins 安装"></a><code>jenkins</code> 安装</h2><h3 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建容器"><a href="#构建容器" class="headerlink" title="构建容器"></a>构建容器</h3><p>创建文件夹存储数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /data/jenkins_home</span><br></pre></td></tr></table></figure>
+
+<p>给文件夹授权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 /data/jenkins_home</span><br></pre></td></tr></table></figure>
+
+<p>一定要映射到卷，不然后面无法使用<code>docker</code>命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name jenkins -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/bin/docker -v /data/jenkins_home:/var/jenkins_home -d jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看jenkins密码"><a href="#查看jenkins密码" class="headerlink" title="查看jenkins密码"></a>查看<code>jenkins</code>密码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看容器</span></span><br><span class="line">docker ps -a</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入容器</span></span><br><span class="line">docker exec -u 0 -it 21ee4816aac1 /bin/bash</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看指定文件内容</span></span><br><span class="line">cat /var/jenkins_home/secrets/initialAdminPassword #密码</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用及问题"><a href="#使用及问题" class="headerlink" title="使用及问题"></a>使用及问题</h3><p>第一次运行成功，后续无法启动，状态显示Exited，需要设置文件夹权限，获取到<code>Jenkins</code>的<code>uid</code>，进行赋权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chown 1000:1000 /data/jenkins_home</span><br></pre></td></tr></table></figure>
+
+<p>虽然映射到卷，<code>jenkis</code>使用<code>docker</code>可以，但是其他<code>docker</code> 命令不行。还需要将当前用户添加到用户组</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加用户组</span></span><br><span class="line">groupadd docker</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加用户到用户组(root:根据实际场景)</span></span><br><span class="line">sudo usermod -a -G docker root</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">上面类容还不行，就修改文件权限</span></span><br><span class="line">cd /var/run</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">允许读写和执行</span></span><br><span class="line">chmod 777 docker.sock</span><br></pre></td></tr></table></figure>
+
+<p><code>jenkins</code>执行<code>shell</code>只执行第一句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># shell 第一句加上这个，指定解释器，下面&quot;#&quot;非注释，也可#!/bin/sh</span><br><span class="line">#!/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>时区不对</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修复Linux时区，查看上海时区</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入</span></span><br><span class="line">timedatectl list-timezones |grep Shanghai</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出</span></span><br><span class="line">Asia/Shanghai</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改时区</span></span><br><span class="line">timedatectl set-timezone Asia/Shanghai</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修复jenkins时区</span></span><br><span class="line">docker exec -it -u root my_jenkins /bin/bash</span><br><span class="line">cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line">echo Asia/Shanghai &gt; /etc/timezone</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">站点重启</span></span><br><span class="line">http://localhost:8080/restart</span><br></pre></td></tr></table></figure>
+
+<p>到此时间格式是改变了，还有其他细节上的时间没有改过来少8个小时。在<code>jenkins</code>上<code>系统管理》脚本命令行</code>运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.setProperty(&#x27;org.apache.commons.jelly.tags.fmt.timeZone&#x27;, &#x27;Asia/Shanghai&#x27;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="自动化部署-net-core"><a href="#自动化部署-net-core" class="headerlink" title="自动化部署.net core"></a>自动化部署<code>.net core</code></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">docker stop xblogs_api</span><br><span class="line">docker rm xblogs_api</span><br><span class="line">docker rmi xblogs_api</span><br><span class="line">cp src/xblogs.HttpApi.Host/Dockerfile $PWD</span><br><span class="line">docker build -t xblogs_api .</span><br><span class="line">docker run -v /root/data:/app/inetpub --name xblogs_api -d -p 2022:80 --restart=always xblogs_api </span><br></pre></td></tr></table></figure>
+
+<h1 id="Windows安装"><a href="#Windows安装" class="headerlink" title="Windows安装"></a><code>Windows</code>安装</h1><blockquote>
+<p>前提是已经安装<code>Jdk 1.8</code><br>正常安装<code>exe</code>或者<code>msi</code>，中间需要选择<code>jdk</code>目录，和服务端口。</p>
+</blockquote>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><h3 id="自动部署-net-core"><a href="#自动部署-net-core" class="headerlink" title="自动部署.net core"></a>自动部署<code>.net core</code></h3><p>正常命令行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet publish -c:Release --self-contained false --output D:\wwwroot\wy2\8000</span><br></pre></td></tr></table></figure>
+
+<p>集成到<code>Jenkins</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@echo 停止应用程序池</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe stop apppool &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 删除应用程序池</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe delete apppool &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 停止站点</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe stop site &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 删除站点</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe delete site &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 进入项目目录</span><br><span class="line">cd &quot;%WORKSPACE%\ShuWen.Property\&quot;</span><br><span class="line"></span><br><span class="line">@echo 生成项目到指定文件夹</span><br><span class="line">dotnet publish -c:Release --self-contained false --output D:\wwwroot\wy2\8000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@echo 新增应用程序池</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe add apppool /name:&quot;wy2&quot; /managedRuntimeVersion:&quot;v4.0&quot;</span><br><span class="line"></span><br><span class="line">@echo 新增站点</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe add site /name:&quot;wy2&quot; /bindings:http/*:8000: /applicationDefaults.applicationPool:&quot;wy2&quot; /physicalPath:&quot;D:\wwwroot\wy2\8000&quot;</span><br><span class="line"></span><br><span class="line">@echo 停止应用程序池</span><br><span class="line">@echo C:\Windows\System32\inetsrv\appcmd.exe stop apppool &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 启动应用程序池</span><br><span class="line">@echo C:\Windows\System32\inetsrv\appcmd.exe start apppool &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 停止站点</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe stop site &quot;wy2&quot;</span><br><span class="line"></span><br><span class="line">@echo 启动站点</span><br><span class="line">C:\Windows\System32\inetsrv\appcmd.exe start site &quot;wy2&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>思路</p>
+<p>Git （pull）&#x3D;&#x3D;&gt; Localhost（Docker build）&#x3D;&#x3D;&gt; Images（Run Imgage）&#x3D;&#x3D;&gt; Container</p>
+<p>实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker stop wuye</span><br><span class="line">docker rm wuye</span><br><span class="line">docker rmi wuye</span><br><span class="line">cd /var/jenkins_mount/workspace/wuye2_dev</span><br><span class="line">docker build -t wuye .</span><br><span class="line">docker run --name wuye -p 2022:80 --restart=always wuye</span><br><span class="line">echo &quot;success&quot;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="uniapp自动打包推送微信平台"><a href="#uniapp自动打包推送微信平台" class="headerlink" title="uniapp自动打包推送微信平台"></a><code>uniapp</code>自动打包推送微信平台</h3><p>正常命令行</p>
+<ul>
+<li>运行HBuilderX</li>
+</ul>
+<blockquote>
+<p>【坑】HBuilderX 3.3.7-alpha，支持使用CLI发行微信小程序。<code>注意版本</code><br>uni-app发行 - 微信小程序 - HBuilderX 文档 (dcloud.net.cn)</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">e: # 进入e盘</span><br><span class="line">cd E:\HBuilderX.3.3.10.20220124.full\HBuilderX # 进入指定目录</span><br><span class="line">start HBuilderX.exe #</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>【坑】运行HBuilderX，一定要先运行这是前提条件，命令行是以此应用程序为服务，否则会提示无服务等问题。<code>运行编辑器</code></p>
+</blockquote>
+<ul>
+<li>操作项目</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 关闭项目,当前版本存在bug,关闭路径需要&#x27;/&#x27;</span><br><span class="line">cli project close --path D:\Projects\wuye_wechat_wy\jiushi-property-side-applet</span><br><span class="line"># 打开项目</span><br><span class="line">cli project open --path D:\Projects\wuye_wechat_wy\jiushi-property-side-applet</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编译上传</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 仅编译uni-app项目到微信小程序，不发行</span><br><span class="line">cli publish --platform mp-weixin --project jiushi-property-side-applet</span><br><span class="line"># 编译uni-app项目到微信小程序，并发行小程序到微信平台</span><br><span class="line">cli publish --platform mp-weixin --project jiushi-property-side-applet --upload true --appid wxe95734bb5d9a1665 --description uniapp-cli发布 --version 2.0.2 --privatekey D:\private.wxe95734bb5d9a1665.key</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>【坑】设置ip白名单(提示管道信息是因为微信检验ip白名单没有通过，要么设置白名单，要么不要关闭白名单)</p>
+</blockquote>
+<ul>
+<li>privatekey 小程序上传密钥文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">开发》开发管理》开发设置》小程序代码上传》生成指定秘钥文件</span><br></pre></td></tr></table></figure>
+
+<p>集成到<code>Jenkins</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">e: </span><br><span class="line">cd E:\HBuilderX.3.3.10.20220124.full\HBuilderX</span><br><span class="line">start HBuilderX.exe </span><br><span class="line">cli project close --path C:/ProgramData/Jenkins/.jenkins/workspace/uniapp_wy/</span><br><span class="line">cli project open --path C:\ProgramData\Jenkins\.jenkins\workspace\uniapp_wy\</span><br><span class="line">cli publish --platform mp-weixin --project uniapp_wy --upload true --appid wxe95734bb5d9a1665 --description uniapp-cli发布1 --privatekey D:\wuxinheng\private.wxe95734bb5d9a1665.key</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:16px;font-family: cursive;">-------------纸短情长 <i class="fa fa-umbrella"></i> 下次再见-------------</div>
+    
+</div>
+  
+</div>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jenkis/" rel="tag"><i class="fa fa-tag"></i> jenkis</a>
+              <a href="/tags/CI-CD/" rel="tag"><i class="fa fa-tag"></i> CI/CD</a>
+              <a href="/tags/docker%E6%9E%84%E5%BB%BAjenkins/" rel="tag"><i class="fa fa-tag"></i> docker构建jenkins</a>
+              <a href="/tags/jenkis%E9%83%A8%E7%BD%B2-netcore/" rel="tag"><i class="fa fa-tag"></i> jenkis部署.netcore</a>
+              <a href="/tags/jenkis%E9%83%A8%E7%BD%B2uniapp/" rel="tag"><i class="fa fa-tag"></i> jenkis部署uniapp</a>
+              <a href="/tags/uniapp%E8%87%AA%E5%8A%A8%E6%8E%A8%E9%80%81%E5%BE%AE%E4%BF%A1/" rel="tag"><i class="fa fa-tag"></i> uniapp自动推送微信</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/11/nginx/" rel="prev" title="nginx使用">
+                  <i class="fa fa-chevron-left"></i> nginx使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/14/doker/" rel="next" title="doker使用">
+                  doker使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuxinheng</span>
+  <span class="icp" itemprop="copyrightHolder">豫ICP备2021025081号 </span>
+</div>
+
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
