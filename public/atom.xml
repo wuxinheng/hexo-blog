@@ -3,11 +3,11 @@
   <title>xblogs</title>
   
   <subtitle>随便写写</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="http://xblogs.net/atom.xml" rel="self"/>
   
-<link href="http://example.com/"/>
+<link href="http://xblogs.net/"/>
 <updated>2022-07-19T01:08:09.730Z</updated>
-<id>http://example.com/</id>
+<id>http://xblogs.net/</id>
   
 <author>
   <name>wuxinheng</name>
@@ -18,8 +18,8 @@
   
 <entry>
   <title>docker-compose</title>
-  <link href="http://example.com/2022/07/18/docker-compose/"/>
-  <id>http://example.com/2022/07/18/docker-compose/</id>
+  <link href="http://xblogs.net/2022/07/18/docker-compose/"/>
+  <id>http://xblogs.net/2022/07/18/docker-compose/</id>
   <published>2022-07-18T15:37:38.000Z</published>
   <updated>2022-07-19T01:08:09.730Z</updated>
     
@@ -30,19 +30,19 @@
     
     
     
-  <category term="docker" scheme="http://example.com/categories/docker/"/>
+  <category term="docker" scheme="http://xblogs.net/categories/docker/"/>
     
-  <category term="dotnet" scheme="http://example.com/categories/docker/dotnet/"/>
+  <category term="dotnet" scheme="http://xblogs.net/categories/docker/dotnet/"/>
     
     
-  <category term="docker-compose" scheme="http://example.com/tags/docker-compose/"/>
+  <category term="docker-compose" scheme="http://xblogs.net/tags/docker-compose/"/>
     
 </entry>
   
 <entry>
   <title>centos一键安装jenkins</title>
-  <link href="http://example.com/2022/07/15/install_jenkins/"/>
-  <id>http://example.com/2022/07/15/install_jenkins/</id>
+  <link href="http://xblogs.net/2022/07/15/install_jenkins/"/>
+  <id>http://xblogs.net/2022/07/15/install_jenkins/</id>
   <published>2022-07-15T14:59:00.000Z</published>
   <updated>2022-07-19T01:08:09.732Z</updated>
     
@@ -53,56 +53,29 @@
     
     
     
-  <category term="jenkins" scheme="http://example.com/categories/jenkins/"/>
+  <category term="jenkins" scheme="http://xblogs.net/categories/jenkins/"/>
     
     
-  <category term="docker" scheme="http://example.com/tags/docker/"/>
+  <category term="docker" scheme="http://xblogs.net/tags/docker/"/>
     
-  <category term="jenkins" scheme="http://example.com/tags/jenkins/"/>
+  <category term="jenkins" scheme="http://xblogs.net/tags/jenkins/"/>
     
-  <category term="shell" scheme="http://example.com/tags/shell/"/>
+  <category term="shell" scheme="http://xblogs.net/tags/shell/"/>
     
-  <category term="脚本" scheme="http://example.com/tags/%E8%84%9A%E6%9C%AC/"/>
+  <category term="脚本" scheme="http://xblogs.net/tags/%E8%84%9A%E6%9C%AC/"/>
     
-  <category term="sh" scheme="http://example.com/tags/sh/"/>
+  <category term="sh" scheme="http://xblogs.net/tags/sh/"/>
     
-  <category term="deploy" scheme="http://example.com/tags/deploy/"/>
+  <category term="deploy" scheme="http://xblogs.net/tags/deploy/"/>
     
-  <category term="jenkis" scheme="http://example.com/tags/jenkis/"/>
-    
-</entry>
-  
-<entry>
-  <title>在docker中部署私有化NuGet</title>
-  <link href="http://example.com/2022/07/15/baget/"/>
-  <id>http://example.com/2022/07/15/baget/</id>
-  <published>2022-07-15T12:48:00.000Z</published>
-  <updated>2022-07-19T01:08:09.729Z</updated>
-    
-  <content type="html"><![CDATA[<blockquote><p>私有化NuGet</p></blockquote><h4 id="创建项目配置文件"><a href="#创建项目配置文件" class="headerlink" title="创建项目配置文件"></a>创建项目配置文件</h4><p>项目的根目录创建<code>baget.env</code>文件，文件内容如下</p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下配置是用于发布包的 API Key。</span></span><br><span class="line"><span class="comment"># 你应该把它改成一个秘密值来保护你的服务器。</span></span><br><span class="line">ApiKey=你的秘钥</span><br><span class="line"></span><br><span class="line"><span class="comment">#文件存储方式和路径</span></span><br><span class="line">Storage__Type=<span class="attribute">FileSystem</span></span><br><span class="line">Storage__Path=/var/baget/packages</span><br><span class="line"></span><br><span class="line"><span class="comment">#数据存储的方式和路径，此处配置要和appsettings.json一致</span></span><br><span class="line"><span class="comment">#Database__Type=Sqlite</span></span><br><span class="line"><span class="comment">#Database__ConnectionString=Data Source=/var/baget/baget.db</span></span><br><span class="line">Database__Type=MySql</span><br><span class="line">Database__ConnectionString=Server=<span class="number">127.0.0.1</span>;Database=BaGet;Uid=root;Pwd=123456;</span><br><span class="line"></span><br><span class="line"><span class="comment">#查询的类型</span></span><br><span class="line">Search__Type=Database</span><br></pre></td></tr></table></figure><h4 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build  -t baget .</span><br></pre></td></tr></table></figure><h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run  --rm --name baget -d -p 5555:80 --env-file baget.env -v &quot;$(pwd)/baget-data:/var/baget&quot; loicsharma/baget:latest</span><br></pre></td></tr></table></figure><h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><ol><li>下面三处的<code>ApiKey</code>需要一致</li></ol><ul><li>代码工程的<code>appsettings.json</code>的<code>ApiKey</code></li><li><code>baget.env</code>文件<code>ApiKey</code></li><li>上传包<code>--api-key</code></li></ul><ol><li>数据存储方式配置一致<br><code>baget.env</code>文件要和appsettings.json一致</li></ol><h4 id="NuGet"><a href="#NuGet" class="headerlink" title="NuGet"></a>NuGet</h4><h5 id="上传"><a href="#上传" class="headerlink" title="上传"></a>上传</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入nupkg所在文件夹，使用命令行。</span></span><br><span class="line">dotnet nuget push -s http://ip:5555/v3/index.json XXX.nupkg -k apiKey</span><br></pre></td></tr></table></figure><h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet nuget delete ShuWen.Common 1.0.0 --non-interactive -s http://ip:5555/v3/index.json -k shuwenNuGet</span><br></pre></td></tr></table></figure><blockquote><p>编辑：配置nupkg版本和其他信息使用<code>NuGetPackageExplorer</code>工具</p></blockquote><h5 id="git仓库地址"><a href="#git仓库地址" class="headerlink" title="git仓库地址"></a>git仓库地址</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">NuGetPackageExplorer编辑器代码仓库</span></span><br><span class="line">https://github.com/NuGetPackageExplorer/NuGetPackageExplorer.git</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">BaGet代码仓库</span></span><br><span class="line">https://github.com/loic-sharma/BaGet.git</span><br></pre></td></tr></table></figure><h5 id="设置visual-studio包源"><a href="#设置visual-studio包源" class="headerlink" title="设置visual studio包源"></a>设置visual studio包源</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令行,设置完成之后重启</span></span><br><span class="line">dotnet nuget add source http://ip:5555/v3/index.json -n name_xx</span><br></pre></td></tr></table></figure><h5 id="批处理上传"><a href="#批处理上传" class="headerlink" title="批处理上传"></a>批处理上传</h5><p>将所有的nupkg放在同一的文件夹下，新建bat文件，复制下面内容运行根据自己的地址进行修改。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">:: close <span class="built_in">echo</span></span><br><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">:: init params</span><br><span class="line"><span class="built_in">set</span> url=http://ip:5555/v3/index.json</span><br><span class="line"><span class="built_in">set</span> deployFile=*.nupkg</span><br><span class="line"><span class="built_in">set</span> apikey=shuwenNuGet</span><br><span class="line"><span class="built_in">echo</span> Searching nupkg file...</span><br><span class="line">rem 启用<span class="string">&quot;延缓环境变量扩充&quot;</span></span><br><span class="line">SETLOCAL ENABLEDELAYEDEXPANSION</span><br><span class="line"><span class="keyword">for</span> %%f <span class="keyword">in</span> (%deployFile%) <span class="keyword">do</span> (</span><br><span class="line">   <span class="built_in">set</span> name=%%f</span><br><span class="line">   <span class="built_in">echo</span> !name! to deploy to %url%</span><br><span class="line">   rem deploy to server</span><br><span class="line">   dotnet nuget push -s %url%  !name!  -k %apikey%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-  <summary type="html">本文介绍了如何在docker中部署私有化nuget。已经nuget使用</summary>
-    
-    
-    
-  <category term="deploy" scheme="http://example.com/categories/deploy/"/>
-    
-    
-  <category term="NuGet私有化" scheme="http://example.com/tags/NuGet%E7%A7%81%E6%9C%89%E5%8C%96/"/>
-    
-  <category term="docker" scheme="http://example.com/tags/docker/"/>
-    
-  <category term="dotnet" scheme="http://example.com/tags/dotnet/"/>
-    
-  <category term="批量上传nupkg" scheme="http://example.com/tags/%E6%89%B9%E9%87%8F%E4%B8%8A%E4%BC%A0nupkg/"/>
+  <category term="jenkis" scheme="http://xblogs.net/tags/jenkis/"/>
     
 </entry>
   
 <entry>
   <title>在docker中部署elk</title>
-  <link href="http://example.com/2022/07/15/elk/"/>
-  <id>http://example.com/2022/07/15/elk/</id>
+  <link href="http://xblogs.net/2022/07/15/elk/"/>
+  <id>http://xblogs.net/2022/07/15/elk/</id>
   <published>2022-07-15T12:48:00.000Z</published>
   <updated>2022-07-19T01:08:09.732Z</updated>
     
@@ -113,48 +86,52 @@
     
     
     
-  <category term="deploy" scheme="http://example.com/categories/deploy/"/>
+  <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
     
     
-  <category term="dotnet" scheme="http://example.com/tags/dotnet/"/>
+  <category term="elk" scheme="http://xblogs.net/tags/elk/"/>
     
-  <category term="elk" scheme="http://example.com/tags/elk/"/>
+  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
     
-  <category term="elasticsearch" scheme="http://example.com/tags/elasticsearch/"/>
+  <category term="elasticsearch" scheme="http://xblogs.net/tags/elasticsearch/"/>
     
-  <category term="elastic" scheme="http://example.com/tags/elastic/"/>
+  <category term="elastic" scheme="http://xblogs.net/tags/elastic/"/>
     
-  <category term="Kibana" scheme="http://example.com/tags/Kibana/"/>
+  <category term="Kibana" scheme="http://xblogs.net/tags/Kibana/"/>
     
 </entry>
   
 <entry>
-  <title>在docker中部署mysql</title>
-  <link href="http://example.com/2022/07/15/mysql/"/>
-  <id>http://example.com/2022/07/15/mysql/</id>
+  <title>在docker中部署私有化NuGet</title>
+  <link href="http://xblogs.net/2022/07/15/baget/"/>
+  <id>http://xblogs.net/2022/07/15/baget/</id>
   <published>2022-07-15T12:48:00.000Z</published>
-  <updated>2022-07-19T01:08:09.733Z</updated>
+  <updated>2022-07-19T01:08:09.729Z</updated>
     
-  <content type="html"><![CDATA[<h3 id="mysql-安装"><a href="#mysql-安装" class="headerlink" title="mysql 安装"></a>mysql 安装</h3><h4 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure><h4 id="构建容器"><a href="#构建容器" class="headerlink" title="构建容器"></a>构建容器</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always -d -p 3306:3306 --privileged=true -v /docker/mysql/conf/my.cnf:/etc/my.cnf -v /docker/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci</span><br></pre></td></tr></table></figure><h4 id="修改密码"><a href="#修改密码" class="headerlink" title="修改密码"></a>修改密码</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入容器</span></span><br><span class="line">docker exec -it mysql bash</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">登录mysql</span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入密码后, 执行下面命令创建新用户 (用户名: root , 密码: 123456)</span></span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;123456&#x27; WITH GRANT OPTION;</span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;Wxh623059..&#x27; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure><h4 id="版本升级"><a href="#版本升级" class="headerlink" title="版本升级"></a>版本升级</h4><p>与普通安装相似，需要先暂停原有的mysql容器，记得先备份。然后拉取新版本mysql,运行修改密码。然后重启。原来旧版本的mysql镜像可以删除。</p>]]></content>
-    
-    
-  <summary type="html">本文介绍了centos docker部署持久化mysql。</summary>
+  <content type="html"><![CDATA[<blockquote><p>私有化NuGet</p></blockquote><h4 id="创建项目配置文件"><a href="#创建项目配置文件" class="headerlink" title="创建项目配置文件"></a>创建项目配置文件</h4><p>项目的根目录创建<code>baget.env</code>文件，文件内容如下</p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下配置是用于发布包的 API Key。</span></span><br><span class="line"><span class="comment"># 你应该把它改成一个秘密值来保护你的服务器。</span></span><br><span class="line">ApiKey=你的秘钥</span><br><span class="line"></span><br><span class="line"><span class="comment">#文件存储方式和路径</span></span><br><span class="line">Storage__Type=<span class="attribute">FileSystem</span></span><br><span class="line">Storage__Path=/var/baget/packages</span><br><span class="line"></span><br><span class="line"><span class="comment">#数据存储的方式和路径，此处配置要和appsettings.json一致</span></span><br><span class="line"><span class="comment">#Database__Type=Sqlite</span></span><br><span class="line"><span class="comment">#Database__ConnectionString=Data Source=/var/baget/baget.db</span></span><br><span class="line">Database__Type=MySql</span><br><span class="line">Database__ConnectionString=Server=<span class="number">127.0.0.1</span>;Database=BaGet;Uid=root;Pwd=123456;</span><br><span class="line"></span><br><span class="line"><span class="comment">#查询的类型</span></span><br><span class="line">Search__Type=Database</span><br></pre></td></tr></table></figure><h4 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build  -t baget .</span><br></pre></td></tr></table></figure><h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run  --rm --name baget -d -p 5555:80 --env-file baget.env -v &quot;$(pwd)/baget-data:/var/baget&quot; loicsharma/baget:latest</span><br></pre></td></tr></table></figure><h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><ol><li>下面三处的<code>ApiKey</code>需要一致</li></ol><ul><li>代码工程的<code>appsettings.json</code>的<code>ApiKey</code></li><li><code>baget.env</code>文件<code>ApiKey</code></li><li>上传包<code>--api-key</code></li></ul><ol><li>数据存储方式配置一致<br><code>baget.env</code>文件要和appsettings.json一致</li></ol><h4 id="NuGet"><a href="#NuGet" class="headerlink" title="NuGet"></a>NuGet</h4><h5 id="上传"><a href="#上传" class="headerlink" title="上传"></a>上传</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入nupkg所在文件夹，使用命令行。</span></span><br><span class="line">dotnet nuget push -s http://ip:5555/v3/index.json XXX.nupkg -k apiKey</span><br></pre></td></tr></table></figure><h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet nuget delete ShuWen.Common 1.0.0 --non-interactive -s http://ip:5555/v3/index.json -k shuwenNuGet</span><br></pre></td></tr></table></figure><blockquote><p>编辑：配置nupkg版本和其他信息使用<code>NuGetPackageExplorer</code>工具</p></blockquote><h5 id="git仓库地址"><a href="#git仓库地址" class="headerlink" title="git仓库地址"></a>git仓库地址</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">NuGetPackageExplorer编辑器代码仓库</span></span><br><span class="line">https://github.com/NuGetPackageExplorer/NuGetPackageExplorer.git</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">BaGet代码仓库</span></span><br><span class="line">https://github.com/loic-sharma/BaGet.git</span><br></pre></td></tr></table></figure><h5 id="设置visual-studio包源"><a href="#设置visual-studio包源" class="headerlink" title="设置visual studio包源"></a>设置visual studio包源</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令行,设置完成之后重启</span></span><br><span class="line">dotnet nuget add source http://ip:5555/v3/index.json -n name_xx</span><br></pre></td></tr></table></figure><h5 id="批处理上传"><a href="#批处理上传" class="headerlink" title="批处理上传"></a>批处理上传</h5><p>将所有的nupkg放在同一的文件夹下，新建bat文件，复制下面内容运行根据自己的地址进行修改。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">:: close <span class="built_in">echo</span></span><br><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">:: init params</span><br><span class="line"><span class="built_in">set</span> url=http://ip:5555/v3/index.json</span><br><span class="line"><span class="built_in">set</span> deployFile=*.nupkg</span><br><span class="line"><span class="built_in">set</span> apikey=shuwenNuGet</span><br><span class="line"><span class="built_in">echo</span> Searching nupkg file...</span><br><span class="line">rem 启用<span class="string">&quot;延缓环境变量扩充&quot;</span></span><br><span class="line">SETLOCAL ENABLEDELAYEDEXPANSION</span><br><span class="line"><span class="keyword">for</span> %%f <span class="keyword">in</span> (%deployFile%) <span class="keyword">do</span> (</span><br><span class="line">   <span class="built_in">set</span> name=%%f</span><br><span class="line">   <span class="built_in">echo</span> !name! to deploy to %url%</span><br><span class="line">   rem deploy to server</span><br><span class="line">   dotnet nuget push -s %url%  !name!  -k %apikey%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>]]></content>
     
     
+  <summary type="html">本文介绍了如何在docker中部署私有化nuget。已经nuget使用</summary>
     
-  <category term="deploy" scheme="http://example.com/categories/deploy/"/>
     
     
-  <category term="mysql" scheme="http://example.com/tags/mysql/"/>
+  <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
     
-  <category term="数据库" scheme="http://example.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
+    
+  <category term="NuGet私有化" scheme="http://xblogs.net/tags/NuGet%E7%A7%81%E6%9C%89%E5%8C%96/"/>
+    
+  <category term="docker" scheme="http://xblogs.net/tags/docker/"/>
+    
+  <category term="批量上传nupkg" scheme="http://xblogs.net/tags/%E6%89%B9%E9%87%8F%E4%B8%8A%E4%BC%A0nupkg/"/>
     
 </entry>
   
 <entry>
   <title>.net core中consul与ocelot使用</title>
-  <link href="http://example.com/2022/07/15/micro_services/"/>
-  <id>http://example.com/2022/07/15/micro_services/</id>
+  <link href="http://xblogs.net/2022/07/15/micro_services/"/>
+  <id>http://xblogs.net/2022/07/15/micro_services/</id>
   <published>2022-07-15T12:48:00.000Z</published>
   <updated>2022-07-19T01:08:09.733Z</updated>
     
@@ -165,23 +142,46 @@
     
     
     
-  <category term="微服务" scheme="http://example.com/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
+  <category term="微服务" scheme="http://xblogs.net/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
     
     
-  <category term="consul" scheme="http://example.com/tags/consul/"/>
+  <category term="consul" scheme="http://xblogs.net/tags/consul/"/>
     
-  <category term="ocelot" scheme="http://example.com/tags/ocelot/"/>
+  <category term="ocelot" scheme="http://xblogs.net/tags/ocelot/"/>
     
-  <category term="nginx" scheme="http://example.com/tags/nginx/"/>
+  <category term="nginx" scheme="http://xblogs.net/tags/nginx/"/>
     
-  <category term="微服务" scheme="http://example.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
+  <category term="微服务" scheme="http://xblogs.net/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
+    
+</entry>
+  
+<entry>
+  <title>在docker中部署mysql</title>
+  <link href="http://xblogs.net/2022/07/15/mysql/"/>
+  <id>http://xblogs.net/2022/07/15/mysql/</id>
+  <published>2022-07-15T12:48:00.000Z</published>
+  <updated>2022-07-19T01:08:09.733Z</updated>
+    
+  <content type="html"><![CDATA[<h3 id="mysql-安装"><a href="#mysql-安装" class="headerlink" title="mysql 安装"></a>mysql 安装</h3><h4 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure><h4 id="构建容器"><a href="#构建容器" class="headerlink" title="构建容器"></a>构建容器</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always -d -p 3306:3306 --privileged=true -v /docker/mysql/conf/my.cnf:/etc/my.cnf -v /docker/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci</span><br></pre></td></tr></table></figure><h4 id="修改密码"><a href="#修改密码" class="headerlink" title="修改密码"></a>修改密码</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入容器</span></span><br><span class="line">docker exec -it mysql bash</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">登录mysql</span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入密码后, 执行下面命令创建新用户 (用户名: root , 密码: 123456)</span></span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;123456&#x27; WITH GRANT OPTION;</span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;Wxh623059..&#x27; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure><h4 id="版本升级"><a href="#版本升级" class="headerlink" title="版本升级"></a>版本升级</h4><p>与普通安装相似，需要先暂停原有的mysql容器，记得先备份。然后拉取新版本mysql,运行修改密码。然后重启。原来旧版本的mysql镜像可以删除。</p>]]></content>
+    
+    
+  <summary type="html">本文介绍了centos docker部署持久化mysql。</summary>
+    
+    
+    
+  <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
+    
+    
+  <category term="mysql" scheme="http://xblogs.net/tags/mysql/"/>
+    
+  <category term="数据库" scheme="http://xblogs.net/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
 </entry>
   
 <entry>
   <title>在docker中部署wtm</title>
-  <link href="http://example.com/2022/07/15/wtm/"/>
-  <id>http://example.com/2022/07/15/wtm/</id>
+  <link href="http://xblogs.net/2022/07/15/wtm/"/>
+  <id>http://xblogs.net/2022/07/15/wtm/</id>
   <published>2022-07-15T12:48:00.000Z</published>
   <updated>2022-07-19T01:08:09.734Z</updated>
     
@@ -192,27 +192,27 @@
     
     
     
-  <category term="deploy" scheme="http://example.com/categories/deploy/"/>
+  <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
     
     
-  <category term="dotnet" scheme="http://example.com/tags/dotnet/"/>
+  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
     
-  <category term="docker部署wtm" scheme="http://example.com/tags/docker%E9%83%A8%E7%BD%B2wtm/"/>
+  <category term="docker部署wtm" scheme="http://xblogs.net/tags/docker%E9%83%A8%E7%BD%B2wtm/"/>
     
-  <category term="wtm" scheme="http://example.com/tags/wtm/"/>
+  <category term="wtm" scheme="http://xblogs.net/tags/wtm/"/>
     
-  <category term="linux验证码" scheme="http://example.com/tags/linux%E9%AA%8C%E8%AF%81%E7%A0%81/"/>
+  <category term="linux验证码" scheme="http://xblogs.net/tags/linux%E9%AA%8C%E8%AF%81%E7%A0%81/"/>
     
-  <category term="gdip" scheme="http://example.com/tags/gdip/"/>
+  <category term="gdip" scheme="http://xblogs.net/tags/gdip/"/>
     
-  <category term="System.Drawing 兼容问题" scheme="http://example.com/tags/System-Drawing-%E5%85%BC%E5%AE%B9%E9%97%AE%E9%A2%98/"/>
+  <category term="System.Drawing 兼容问题" scheme="http://xblogs.net/tags/System-Drawing-%E5%85%BC%E5%AE%B9%E9%97%AE%E9%A2%98/"/>
     
 </entry>
   
 <entry>
   <title>doker使用</title>
-  <link href="http://example.com/2022/07/14/doker/"/>
-  <id>http://example.com/2022/07/14/doker/</id>
+  <link href="http://xblogs.net/2022/07/14/doker/"/>
+  <id>http://xblogs.net/2022/07/14/doker/</id>
   <published>2022-07-14T14:45:00.000Z</published>
   <updated>2022-07-19T01:08:09.731Z</updated>
     
@@ -223,17 +223,17 @@
     
     
     
-  <category term="docker" scheme="http://example.com/categories/docker/"/>
+  <category term="docker" scheme="http://xblogs.net/categories/docker/"/>
     
     
-  <category term="docker" scheme="http://example.com/tags/docker/"/>
+  <category term="docker" scheme="http://xblogs.net/tags/docker/"/>
     
 </entry>
   
 <entry>
   <title>jenkins使用</title>
-  <link href="http://example.com/2022/07/13/jenkins/"/>
-  <id>http://example.com/2022/07/13/jenkins/</id>
+  <link href="http://xblogs.net/2022/07/13/jenkins/"/>
+  <id>http://xblogs.net/2022/07/13/jenkins/</id>
   <published>2022-07-13T14:21:14.000Z</published>
   <updated>2022-07-19T01:08:09.733Z</updated>
     
@@ -244,27 +244,27 @@
     
     
     
-  <category term="jenkins" scheme="http://example.com/categories/jenkins/"/>
+  <category term="jenkins" scheme="http://xblogs.net/categories/jenkins/"/>
     
     
-  <category term="jenkis" scheme="http://example.com/tags/jenkis/"/>
+  <category term="jenkis" scheme="http://xblogs.net/tags/jenkis/"/>
     
-  <category term="CI/CD" scheme="http://example.com/tags/CI-CD/"/>
+  <category term="CI/CD" scheme="http://xblogs.net/tags/CI-CD/"/>
     
-  <category term="docker构建jenkins" scheme="http://example.com/tags/docker%E6%9E%84%E5%BB%BAjenkins/"/>
+  <category term="docker构建jenkins" scheme="http://xblogs.net/tags/docker%E6%9E%84%E5%BB%BAjenkins/"/>
     
-  <category term="jenkis部署.netcore" scheme="http://example.com/tags/jenkis%E9%83%A8%E7%BD%B2-netcore/"/>
+  <category term="jenkis部署.netcore" scheme="http://xblogs.net/tags/jenkis%E9%83%A8%E7%BD%B2-netcore/"/>
     
-  <category term="jenkis部署uniapp" scheme="http://example.com/tags/jenkis%E9%83%A8%E7%BD%B2uniapp/"/>
+  <category term="jenkis部署uniapp" scheme="http://xblogs.net/tags/jenkis%E9%83%A8%E7%BD%B2uniapp/"/>
     
-  <category term="uniapp自动推送微信" scheme="http://example.com/tags/uniapp%E8%87%AA%E5%8A%A8%E6%8E%A8%E9%80%81%E5%BE%AE%E4%BF%A1/"/>
+  <category term="uniapp自动推送微信" scheme="http://xblogs.net/tags/uniapp%E8%87%AA%E5%8A%A8%E6%8E%A8%E9%80%81%E5%BE%AE%E4%BF%A1/"/>
     
 </entry>
   
 <entry>
   <title>nginx使用</title>
-  <link href="http://example.com/2022/07/11/nginx/"/>
-  <id>http://example.com/2022/07/11/nginx/</id>
+  <link href="http://xblogs.net/2022/07/11/nginx/"/>
+  <id>http://xblogs.net/2022/07/11/nginx/</id>
   <published>2022-07-11T12:32:35.000Z</published>
   <updated>2022-07-19T01:08:09.734Z</updated>
     
@@ -275,16 +275,16 @@
     
     
     
-  <category term="nginx" scheme="http://example.com/categories/nginx/"/>
+  <category term="nginx" scheme="http://xblogs.net/categories/nginx/"/>
     
     
-  <category term="docker" scheme="http://example.com/tags/docker/"/>
+  <category term="docker" scheme="http://xblogs.net/tags/docker/"/>
     
-  <category term="nginx代理" scheme="http://example.com/tags/nginx%E4%BB%A3%E7%90%86/"/>
+  <category term="nginx代理" scheme="http://xblogs.net/tags/nginx%E4%BB%A3%E7%90%86/"/>
     
-  <category term="nginx负载均衡" scheme="http://example.com/tags/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"/>
+  <category term="nginx负载均衡" scheme="http://xblogs.net/tags/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"/>
     
-  <category term="nginx配置ssl" scheme="http://example.com/tags/nginx%E9%85%8D%E7%BD%AEssl/"/>
+  <category term="nginx配置ssl" scheme="http://xblogs.net/tags/nginx%E9%85%8D%E7%BD%AEssl/"/>
     
 </entry>
   
