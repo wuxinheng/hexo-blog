@@ -1,6 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>在docker中部署私有化NuGet</title>
+    <url>/2022/07/15/baget/</url>
+    <content><![CDATA[<blockquote>
+<p>私有化NuGet</p>
+</blockquote>
+<h4 id="创建项目配置文件"><a href="#创建项目配置文件" class="headerlink" title="创建项目配置文件"></a>创建项目配置文件</h4><p>项目的根目录创建<code>baget.env</code>文件，文件内容如下</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 以下配置是用于发布包的 API Key。</span></span><br><span class="line"><span class="comment"># 你应该把它改成一个秘密值来保护你的服务器。</span></span><br><span class="line">ApiKey=你的秘钥</span><br><span class="line"></span><br><span class="line"><span class="comment">#文件存储方式和路径</span></span><br><span class="line">Storage__Type=<span class="attribute">FileSystem</span></span><br><span class="line">Storage__Path=/var/baget/packages</span><br><span class="line"></span><br><span class="line"><span class="comment">#数据存储的方式和路径，此处配置要和appsettings.json一致</span></span><br><span class="line"><span class="comment">#Database__Type=Sqlite</span></span><br><span class="line"><span class="comment">#Database__ConnectionString=Data Source=/var/baget/baget.db</span></span><br><span class="line">Database__Type=MySql</span><br><span class="line">Database__ConnectionString=Server=<span class="number">127.0.0.1</span>;Database=BaGet;Uid=root;Pwd=123456;</span><br><span class="line"></span><br><span class="line"><span class="comment">#查询的类型</span></span><br><span class="line">Search__Type=Database</span><br></pre></td></tr></table></figure>
+
+<h4 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker build  -t baget .</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run  --rm --name baget -d -p 5555:80 --env-file baget.env -v &quot;$(pwd)/baget-data:/var/baget&quot; loicsharma/baget:latest</span><br></pre></td></tr></table></figure>
+
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><ol>
+<li>下面三处的<code>ApiKey</code>需要一致</li>
+</ol>
+<ul>
+<li>代码工程的<code>appsettings.json</code>的<code>ApiKey</code></li>
+<li><code>baget.env</code>文件<code>ApiKey</code></li>
+<li>上传包<code>--api-key</code></li>
+</ul>
+<ol>
+<li>数据存储方式配置一致<br><code>baget.env</code>文件要和appsettings.json一致</li>
+</ol>
+<h4 id="NuGet"><a href="#NuGet" class="headerlink" title="NuGet"></a>NuGet</h4><h5 id="上传"><a href="#上传" class="headerlink" title="上传"></a>上传</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入nupkg所在文件夹，使用命令行。</span></span><br><span class="line">dotnet nuget push -s http://ip:5555/v3/index.json XXX.nupkg -k apiKey</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">dotnet nuget delete ShuWen.Common 1.0.0 --non-interactive -s http://ip:5555/v3/index.json -k shuwenNuGet</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>编辑：配置nupkg版本和其他信息使用<code>NuGetPackageExplorer</code>工具</p>
+</blockquote>
+<h5 id="git仓库地址"><a href="#git仓库地址" class="headerlink" title="git仓库地址"></a>git仓库地址</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">NuGetPackageExplorer编辑器代码仓库</span></span><br><span class="line">https://github.com/NuGetPackageExplorer/NuGetPackageExplorer.git</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">BaGet代码仓库</span></span><br><span class="line">https://github.com/loic-sharma/BaGet.git</span><br></pre></td></tr></table></figure>
+
+<h5 id="设置visual-studio包源"><a href="#设置visual-studio包源" class="headerlink" title="设置visual studio包源"></a>设置visual studio包源</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令行,设置完成之后重启</span></span><br><span class="line">dotnet nuget add source http://ip:5555/v3/index.json -n name_xx</span><br></pre></td></tr></table></figure>
+
+<h5 id="批处理上传"><a href="#批处理上传" class="headerlink" title="批处理上传"></a>批处理上传</h5><p>将所有的nupkg放在同一的文件夹下，新建bat文件，复制下面内容运行根据自己的地址进行修改。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">:: close <span class="built_in">echo</span></span><br><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">:: init params</span><br><span class="line"><span class="built_in">set</span> url=http://ip:5555/v3/index.json</span><br><span class="line"><span class="built_in">set</span> deployFile=*.nupkg</span><br><span class="line"><span class="built_in">set</span> apikey=shuwenNuGet</span><br><span class="line"><span class="built_in">echo</span> Searching nupkg file...</span><br><span class="line">rem 启用<span class="string">&quot;延缓环境变量扩充&quot;</span></span><br><span class="line">SETLOCAL ENABLEDELAYEDEXPANSION</span><br><span class="line"><span class="keyword">for</span> %%f <span class="keyword">in</span> (%deployFile%) <span class="keyword">do</span> (</span><br><span class="line">   <span class="built_in">set</span> name=%%f</span><br><span class="line">   <span class="built_in">echo</span> !name! to deploy to %url%</span><br><span class="line">   rem deploy to server</span><br><span class="line">   dotnet nuget push -s %url%  !name!  -k %apikey%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>deploy</category>
+      </categories>
+      <tags>
+        <tag>NuGet私有化</tag>
+        <tag>docker</tag>
+        <tag>dotnet</tag>
+        <tag>批量上传nupkg</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>doker使用</title>
     <url>/2022/07/14/doker/</url>
     <content><![CDATA[<h1 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo yum install docker-ce</span><br></pre></td></tr></table></figure>
@@ -132,128 +181,40 @@
       </tags>
   </entry>
   <entry>
-    <title>在docker中部署私有化NuGet</title>
-    <url>/2022/07/15/baget/</url>
-    <content><![CDATA[<blockquote>
-<p>私有化NuGet</p>
+    <title>docker-compose</title>
+    <url>/2022/07/18/docker-compose/</url>
+    <content><![CDATA[<h3 id="编写docker-compose-yml"><a href="#编写docker-compose-yml" class="headerlink" title="编写docker-compose.yml"></a>编写docker-compose.yml</h3><blockquote>
+<p>项目文件结构本来不是现在这个样子。由于使用的是dotnet Wtm开发框架，生成代码的原因。对文件结构进行了改动。</p>
+<p>Dockerfile是在没有移动之前就创建了。如果解决方案文件在目标项目文件目录中，或者低于其他引用的项目文件VS提示无法添加。但是，不要慌！<br>这根本不是问题。我们自己可以仿写一个Dockerfile。这个过程中需要注意两点。1、修改目标项目需要的文件复制信息（包括引用文件）和项目信息2、打包容器是否需要指定Dockerfile文件。<br>可以在Dokcerfile中指定国内镜像。方便安装一些其他插件</p>
+<p>Docker-compose。应为好像也跟Dockerfile一样的原因。可能提示你失败之后文件出现在目标项目文件夹中。但是肯定不对！<br>我是自己新建一个项目创建的Docker-compose。然后把项目文件和.yml文件粘贴到整个项目文件夹中。然后到vs添加docker-compse项目</p>
+<p>然后根据自己需求修改配置文件即可。</p>
 </blockquote>
-<h4 id="创建项目配置文件"><a href="#创建项目配置文件" class="headerlink" title="创建项目配置文件"></a>创建项目配置文件</h4><p>项目的根目录创建<code>baget.env</code>文件，文件内容如下</p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 以下配置是用于发布包的 API Key。</span></span><br><span class="line"><span class="comment"># 你应该把它改成一个秘密值来保护你的服务器。</span></span><br><span class="line">ApiKey=你的秘钥</span><br><span class="line"></span><br><span class="line"><span class="comment">#文件存储方式和路径</span></span><br><span class="line">Storage__Type=<span class="attribute">FileSystem</span></span><br><span class="line">Storage__Path=/var/baget/packages</span><br><span class="line"></span><br><span class="line"><span class="comment">#数据存储的方式和路径，此处配置要和appsettings.json一致</span></span><br><span class="line"><span class="comment">#Database__Type=Sqlite</span></span><br><span class="line"><span class="comment">#Database__ConnectionString=Data Source=/var/baget/baget.db</span></span><br><span class="line">Database__Type=MySql</span><br><span class="line">Database__ConnectionString=Server=<span class="number">127.0.0.1</span>;Database=BaGet;Uid=root;Pwd=123456;</span><br><span class="line"></span><br><span class="line"><span class="comment">#查询的类型</span></span><br><span class="line">Search__Type=Database</span><br></pre></td></tr></table></figure>
+<h4 id="演示项目文件目录说明"><a href="#演示项目文件目录说明" class="headerlink" title="演示项目文件目录说明"></a>演示项目文件目录说明</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:.</span><br><span class="line">├─Property  # 多租户</span><br><span class="line">│  ├─ShuWen.Property # 展示层</span><br><span class="line">│  │ ├─Dockerfile # 构建镜像的文本文件</span><br><span class="line">│  │ ├─appsettings.json # 应用程序配置文件</span><br><span class="line">│  │ ├─nuget.config # 私有化nuget配置文件</span><br><span class="line">│  │ ├─ShuWen.Property.sln # ShuWen.Property 解决方案</span><br><span class="line">│  └─ShuWen.Property.ViewModel # 业务逻辑</span><br><span class="line">├─PropertyHost # 管理平台</span><br><span class="line">│  ├─Shuwen.Property.Host # 展示层</span><br><span class="line">│  │ ├─Dockerfile # 构建镜像的文本文件</span><br><span class="line">│  │ ├─appsettings.json # 应用程序配置文件</span><br><span class="line">│  │ ├─nuget.config # 私有化nuget配置文件</span><br><span class="line">│  │ ├─ShuWen.Property.Host.sln # ShuWen.Property.Host 解决方案</span><br><span class="line">│  └─Shuwen.Property.Host.ViewModel # 业务逻辑</span><br><span class="line">├─ShuWen.Property.DataAccess # 数据访问</span><br><span class="line">├─ShuWen.Property.Model # 通用实体</span><br><span class="line">├─src # 框架源代码</span><br><span class="line">├─docker-compose.dcproj # 不是dotnet开发可以忽略</span><br><span class="line">├─docker-compose.override.yml # 编排文件，override 开发应该都懂</span><br><span class="line">└─docker-compose.yml # 编排文件</span><br></pre></td></tr></table></figure>
 
-<h4 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker build  -t baget .</span><br></pre></td></tr></table></figure>
+<h5 id="ShuWen-Property-x2F-Dockerfile"><a href="#ShuWen-Property-x2F-Dockerfile" class="headerlink" title="ShuWen.Property&#x2F;Dockerfile"></a>ShuWen.Property&#x2F;Dockerfile</h5><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line">FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新 apt-get,简单的说容器内核基于Ubuntu。</span></span><br><span class="line">RUN apt-get update </span><br><span class="line"><span class="comment"># 更换国内镜像</span></span><br><span class="line">RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak &amp;&amp; \</span><br><span class="line">  echo &quot;deb http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot; &gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb http://mirrors.aliyun.com/debian-security buster/updates main&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb-src http://mirrors.aliyun.com/debian-security buster/updates main&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">  echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list</span><br><span class="line"><span class="comment"># Linux上是没有GDI+，于是 Mono 团队使用C语言实现了 GDI+ 接口，提供对非 Windows 系统的 GDI+ 接口访问能力，这个就是libgdiplus</span></span><br><span class="line">RUN  apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span><br><span class="line"></span><br><span class="line">WORKDIR /app</span><br><span class="line">EXPOSE 80</span><br><span class="line">FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build</span><br><span class="line"></span><br><span class="line">WORKDIR /src</span><br><span class="line">COPY <span class="section">[&quot;Property/ShuWen.Property/ShuWen.Property.csproj&quot;, &quot;Property/ShuWen.Property/&quot;]</span></span><br><span class="line">COPY <span class="section">[&quot;Property/ShuWen.Property/nuget.config&quot;, &quot;Property/ShuWen.Property/&quot;]</span></span><br><span class="line"></span><br><span class="line">COPY <span class="section">[&quot;src/WalkingTec.Mvvm.TagHelpers.LayUI/WalkingTec.Mvvm.TagHelpers.LayUI.csproj&quot;, &quot;src/WalkingTec.Mvvm.TagHelpers.LayUI/&quot;]</span></span><br><span class="line">COPY <span class="section">[&quot;src/WalkingTec.Mvvm.Core/WalkingTec.Mvvm.Core.csproj&quot;, &quot;src/WalkingTec.Mvvm.Core/&quot;]</span></span><br><span class="line">COPY <span class="section">[&quot;src/WalkingTec.Mvvm.Mvc/WalkingTec.Mvvm.Mvc.csproj&quot;, &quot;src/WalkingTec.Mvvm.Mvc/&quot;]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">COPY <span class="section">[&quot;ShuWen.Property.DataAccess/ShuWen.Property.DataAccess.csproj&quot;, &quot;ShuWen.Property.DataAccess/&quot;]</span></span><br><span class="line"></span><br><span class="line">COPY <span class="section">[&quot;ShuWen.Property.Model/ShuWen.Property.Model.csproj&quot;, &quot;ShuWen.Property.Model/&quot;]</span></span><br><span class="line"></span><br><span class="line">COPY <span class="section">[&quot;Property/ShuWen.Property.ViewModel/ShuWen.Property.ViewModel.csproj&quot;, &quot;Property/ShuWen.Property.ViewModel/&quot;]</span></span><br><span class="line"></span><br><span class="line">RUN dotnet restore &quot;Property/ShuWen.Property/ShuWen.Property.csproj&quot;  --configfile &quot;Property/ShuWen.Property/nuget.config&quot;</span><br><span class="line"></span><br><span class="line">COPY . .</span><br><span class="line">WORKDIR &quot;Property/ShuWen.Property/&quot;</span><br><span class="line">RUN dotnet build &quot;ShuWen.Property.csproj&quot; -c Release -o /app/build</span><br><span class="line"></span><br><span class="line">FROM build AS publish</span><br><span class="line">RUN dotnet publish &quot;ShuWen.Property.csproj&quot; -c Release -o /app/publish</span><br><span class="line"></span><br><span class="line">FROM base AS final</span><br><span class="line">WORKDIR /app</span><br><span class="line">COPY <span class="attr">--from</span>=publish /app/publish .</span><br><span class="line">ENTRYPOINT <span class="section">[&quot;dotnet&quot;, &quot;ShuWen.Property.dll&quot;]</span></span><br></pre></td></tr></table></figure>
 
-<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run  --rm --name baget -d -p 5555:80 --env-file baget.env -v &quot;$(pwd)/baget-data:/var/baget&quot; loicsharma/baget:latest</span><br></pre></td></tr></table></figure>
+<h5 id="nuget-config"><a href="#nuget-config" class="headerlink" title="nuget.config"></a>nuget.config</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">	&lt;packageSources&gt;</span><br><span class="line">		&lt;add key=&quot;Nuget.org&quot; value=&quot;https://api.nuget.org/v3/index.json&quot; /&gt;</span><br><span class="line">		&lt;add key=&quot;Baget&quot; value=&quot;http://ip:5555/v3/index.json&quot; /&gt;</span><br><span class="line">	&lt;/packageSources&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
 
-<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><ol>
-<li>下面三处的<code>ApiKey</code>需要一致</li>
-</ol>
-<ul>
-<li>代码工程的<code>appsettings.json</code>的<code>ApiKey</code></li>
-<li><code>baget.env</code>文件<code>ApiKey</code></li>
-<li>上传包<code>--api-key</code></li>
-</ul>
-<ol>
-<li>数据存储方式配置一致<br><code>baget.env</code>文件要和appsettings.json一致</li>
-</ol>
-<h4 id="NuGet"><a href="#NuGet" class="headerlink" title="NuGet"></a>NuGet</h4><h5 id="上传"><a href="#上传" class="headerlink" title="上传"></a>上传</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入nupkg所在文件夹，使用命令行。</span></span><br><span class="line">dotnet nuget push -s http://ip:5555/v3/index.json XXX.nupkg -k apiKey</span><br></pre></td></tr></table></figure>
+<h5 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">version: &#x27;3.4&#x27;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  shuwen.property:</span><br><span class="line">    image: $&#123;DOCKER_REGISTRY-&#125;shuwen.property # 镜像名称</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: Property/ShuWen.Property/Dockerfile #docker文件地址</span><br><span class="line">    ports: </span><br><span class="line">      - &quot;5001:80&quot;	# 主机端口：容器端口</span><br><span class="line">      </span><br><span class="line">  shuwen.property.host:</span><br><span class="line">    image: $&#123;DOCKER_REGISTRY-&#125;shuwen.property.host</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: PropertyHost/Shuwen.Property.Host/Dockerfile</span><br><span class="line">    ports: </span><br><span class="line">      - &quot;5002:80&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">dotnet nuget delete ShuWen.Common 1.0.0 --non-interactive -s http://ip:5555/v3/index.json -k shuwenNuGet</span><br></pre></td></tr></table></figure>
+<h5 id="docker-compose-override-yml"><a href="#docker-compose-override-yml" class="headerlink" title="docker-compose.override.yml"></a>docker-compose.override.yml</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">version: &#x27;3.4&#x27;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  shuwen.property:</span><br><span class="line">    environment:</span><br><span class="line">      - ASPNETCORE_ENVIRONMENT=Development</span><br><span class="line">      - ASPNETCORE_URLS=http://+:80	# 运行地址,加上443要求使用ssl，我就删除了，后期通过nginx来处理吧</span><br><span class="line">      # - ASPNETCORE_URLS=https://+:443;http://+:80</span><br><span class="line">    ports: </span><br><span class="line">      - &quot;5001:80&quot; # 主机端口：容器端口</span><br><span class="line">    volumes:</span><br><span class="line">      - $&#123;APPDATA&#125;/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro</span><br><span class="line">      - $&#123;APPDATA&#125;/ASP.NET/Https:/root/.aspnet/https:ro</span><br><span class="line">  shuwen.property.host:</span><br><span class="line">    environment:</span><br><span class="line">      - ASPNETCORE_ENVIRONMENT=Development</span><br><span class="line">      - ASPNETCORE_URLS=http://+:80</span><br><span class="line">      # - ASPNETCORE_URLS=https://+:443;http://+:80</span><br><span class="line">    ports: </span><br><span class="line">      - &quot;5002:80&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - $&#123;APPDATA&#125;/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro</span><br><span class="line">      - $&#123;APPDATA&#125;/ASP.NET/Https:/root/.aspnet/https:ro</span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>编辑：配置nupkg版本和其他信息使用<code>NuGetPackageExplorer</code>工具</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><blockquote>
+<p>不建议使用pip安装，经常报错。能解决报错除外！</p>
 </blockquote>
-<h5 id="git仓库地址"><a href="#git仓库地址" class="headerlink" title="git仓库地址"></a>git仓库地址</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">NuGetPackageExplorer编辑器代码仓库</span></span><br><span class="line">https://github.com/NuGetPackageExplorer/NuGetPackageExplorer.git</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">BaGet代码仓库</span></span><br><span class="line">https://github.com/loic-sharma/BaGet.git</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">github太慢使用下面daocloud地址</span></span><br><span class="line">sudo curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">daocloud地址</span></span><br><span class="line">sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加可执行权限</span></span><br><span class="line">sudo chmod +x /usr/local/bin/docker-compose</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">docker-compose --version</span><br></pre></td></tr></table></figure>
 
-<h5 id="设置visual-studio包源"><a href="#设置visual-studio包源" class="headerlink" title="设置visual studio包源"></a>设置visual studio包源</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令行,设置完成之后重启</span></span><br><span class="line">dotnet nuget add source http://ip:5555/v3/index.json -n name_xx</span><br></pre></td></tr></table></figure>
+<h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose build</span><br></pre></td></tr></table></figure>
 
-<h5 id="批处理上传"><a href="#批处理上传" class="headerlink" title="批处理上传"></a>批处理上传</h5><p>将所有的nupkg放在同一的文件夹下，新建bat文件，复制下面内容运行根据自己的地址进行修改。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">:: close <span class="built_in">echo</span></span><br><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">:: init params</span><br><span class="line"><span class="built_in">set</span> url=http://ip:5555/v3/index.json</span><br><span class="line"><span class="built_in">set</span> deployFile=*.nupkg</span><br><span class="line"><span class="built_in">set</span> apikey=shuwenNuGet</span><br><span class="line"><span class="built_in">echo</span> Searching nupkg file...</span><br><span class="line">rem 启用<span class="string">&quot;延缓环境变量扩充&quot;</span></span><br><span class="line">SETLOCAL ENABLEDELAYEDEXPANSION</span><br><span class="line"><span class="keyword">for</span> %%f <span class="keyword">in</span> (%deployFile%) <span class="keyword">do</span> (</span><br><span class="line">   <span class="built_in">set</span> name=%%f</span><br><span class="line">   <span class="built_in">echo</span> !name! to deploy to %url%</span><br><span class="line">   rem deploy to server</span><br><span class="line">   dotnet nuget push -s %url%  !name!  -k %apikey%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
-        <category>deploy</category>
+        <category>docker</category>
+        <category>dotnet</category>
       </categories>
       <tags>
-        <tag>docker</tag>
-        <tag>NuGet私有化</tag>
-        <tag>dotnet</tag>
-        <tag>批量上传nupkg</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在docker中部署elk</title>
-    <url>/2022/07/15/elk/</url>
-    <content><![CDATA[<h3 id="ELK-安装"><a href="#ELK-安装" class="headerlink" title="ELK 安装"></a>ELK 安装</h3><p><img src="C:\Users\Administrator\Desktop\docs\images\操作系统\linux使用\elkinfo.jpeg"></p>
-<h4 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h4><p><a href="https://www.elastic.co/cn/downloads/elasticsearch">下载地址&#x2F;文档</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
-
-
-
-<blockquote>
-<p>从Elasticsearch 8.0开始，默认启用安全性。启用安全保护后，弹性堆栈安全功能要求对传输网络层进行TLS加密，否则您的群集将无法启动。</p>
-</blockquote>
-<ol>
-<li><p>为Elasticsearch和Kibana创建一个新的docker网络</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker network create elastic</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>在Docker中启动Elasticsearch。为生成一个密码弹性的用户和终端的输出，以及用于注册Kibana的注册令牌。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -d --name es01 --net elastic -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>复制生成的密码和注册令牌，并将其保存在安全位置。这些值仅在首次启动Elasticsearch时显示。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-&gt; Elasticsearch security features have been automatically configured!</span><br><span class="line">-&gt; Authentication is enabled and cluster connections are encrypted.</span><br><span class="line"></span><br><span class="line"># 账号：elastic；初始密码：+x96YH3NDGmxG-aQ4M8P；重置密码命令：bin/elasticsearch-reset-password -u elastic</span><br><span class="line">-&gt;  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):</span><br><span class="line">  +x96YH3NDGmxG-aQ4M8P</span><br><span class="line"></span><br><span class="line"># ca证书密钥：41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line">-&gt;  HTTP CA certificate SHA-256 fingerprint:</span><br><span class="line">  41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line"></span><br><span class="line"># kibana初始化注册密钥：</span><br><span class="line">eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line">-&gt;  Configure Kibana to use this cluster:</span><br><span class="line">* Run Kibana and click the configuration link in the terminal when Kibana starts.</span><br><span class="line">* Copy the following enrollment token and paste it into Kibana in your browser (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line"></span><br><span class="line">-&gt; Configure other nodes to join this cluster:</span><br><span class="line">* Copy the following enrollment token and start new Elasticsearch nodes with `bin/elasticsearch --enrollment-token &lt;token&gt;` (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlFvN3pEWUFCYVlPRkpUUmxpNkhMOlMzYzVYdWExUkkyWFUtdFZ4U0tENlEifQ==</span><br><span class="line"></span><br><span class="line">  If you&#x27;re running in Docker, copy the enrollment token and run:</span><br><span class="line">  `docker run -e &quot;ENROLLMENT_TOKEN=&lt;token&gt;&quot; docker.elastic.co/elasticsearch/elasticsearch:8.1.2`</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol>
-<li><p>如果您需要重置的密码<code>弹性的</code>用户或其他内置用户，运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-password.html"><code>弹性搜索-重置-密码</code></a>工具。该工具在弹性搜索中可用<code>/bin</code>Docker容器的目录。例如</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</span><br><span class="line"># Password for the [elastic] user successfully reset.</span><br><span class="line"># New value: 4GlsHFPF1kbh8_i4*A3I</span><br></pre></td></tr></table></figure></li>
-</ol>
-</li>
-<li><p>复制<code>http_ca.crt</code>从Docker容器到本地机器的安全证书。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>打开一个新的终端，使用<code>http_ca.crt</code>从Docker容器中复制的文件。输入的密码<code>弹性的</code>出现提示时的用户。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl --cacert http_ca.crt -u elastic https://localhost:9200</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p><strong>生成注册令牌</strong></p>
-<p>注册令牌的有效期为30分钟。如果需要生成新的注册令牌，请运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/create-enrollment-token.html"><code>弹性搜索-创建-注册-令牌</code></a>现有节点上的工具。该工具在弹性搜索中可用<code>容器</code>docker容器的目录。</p>
-<p>例如，在现有的上运行以下命令<code>es01</code>为新的弹性搜索节点生成注册令牌的节点:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node</span><br><span class="line"></span><br><span class="line"># eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklfQzhEb0FCWmlRQnRCNGFiLVRuOnlwMzZET0Y0VHAtNzd1SC1yMUYzbGcifQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>在启动第一个节点的终端中，复制generatedenrollment令牌以添加新的Elasticsearch节点。在您的新节点上，启动Elasticsearch并包含生成的注册令牌。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -e ENROLLMENT_TOKEN=&quot;&lt;token&gt;&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"></span><br><span class="line"># docker run -e ENROLLMENT_TOKEN=&quot;eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklmQUpEb0FCWmlRQnRCNGFKdVQ2OlUwODhtejV2U0EtaWowaGlHRVRkOGcifQ==&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"># 如果失败可能是内存溢出</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h4><p><a href="https://www.cnblogs.com/linjiqin/p/12103645.html">https://www.cnblogs.com/linjiqin/p/12103645.html</a></p>
-<h4 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull kibana:8.0.0</span><br></pre></td></tr></table></figure>
-
-<p>文档地址</p>
-<p><a href="https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450">https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p>
-<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>vi&#x2F;vim：容器内无法使用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it -u 0 容器名称/id /bin/bash</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install vim*</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>apt-get 在容器内会提示一个路径错误。是因为权限不足。在进入容器时声明权限<code>-u 0</code>使用root权限进入。</p>
-<p><em>apt-get</em>，是一条linux命令，适用于deb包管理式的操作系统，主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。</p>
-<p>此处可以理解centos 使用 yum 安装软件。Ubuntu 使用 apt-get。但是Linux环境下的docker是使用apt-get。包管理跟操作系统无关。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>deploy</category>
-      </categories>
-      <tags>
-        <tag>dotnet</tag>
-        <tag>elk</tag>
-        <tag>elasticsearch</tag>
-        <tag>elastic</tag>
-        <tag>Kibana</tag>
+        <tag>docker-compose</tag>
       </tags>
   </entry>
   <entry>
@@ -364,6 +325,82 @@
         <tag>jenkis部署.netcore</tag>
         <tag>jenkis部署uniapp</tag>
         <tag>uniapp自动推送微信</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在docker中部署elk</title>
+    <url>/2022/07/15/elk/</url>
+    <content><![CDATA[<h3 id="ELK-安装"><a href="#ELK-安装" class="headerlink" title="ELK 安装"></a>ELK 安装</h3><p><img src="C:\Users\Administrator\Desktop\docs\images\操作系统\linux使用\elkinfo.jpeg"></p>
+<h4 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h4><p><a href="https://www.elastic.co/cn/downloads/elasticsearch">下载地址&#x2F;文档</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>从Elasticsearch 8.0开始，默认启用安全性。启用安全保护后，弹性堆栈安全功能要求对传输网络层进行TLS加密，否则您的群集将无法启动。</p>
+</blockquote>
+<ol>
+<li><p>为Elasticsearch和Kibana创建一个新的docker网络</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker network create elastic</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在Docker中启动Elasticsearch。为生成一个密码弹性的用户和终端的输出，以及用于注册Kibana的注册令牌。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -d --name es01 --net elastic -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>复制生成的密码和注册令牌，并将其保存在安全位置。这些值仅在首次启动Elasticsearch时显示。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-&gt; Elasticsearch security features have been automatically configured!</span><br><span class="line">-&gt; Authentication is enabled and cluster connections are encrypted.</span><br><span class="line"></span><br><span class="line"># 账号：elastic；初始密码：+x96YH3NDGmxG-aQ4M8P；重置密码命令：bin/elasticsearch-reset-password -u elastic</span><br><span class="line">-&gt;  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):</span><br><span class="line">  +x96YH3NDGmxG-aQ4M8P</span><br><span class="line"></span><br><span class="line"># ca证书密钥：41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line">-&gt;  HTTP CA certificate SHA-256 fingerprint:</span><br><span class="line">  41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line"></span><br><span class="line"># kibana初始化注册密钥：</span><br><span class="line">eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line">-&gt;  Configure Kibana to use this cluster:</span><br><span class="line">* Run Kibana and click the configuration link in the terminal when Kibana starts.</span><br><span class="line">* Copy the following enrollment token and paste it into Kibana in your browser (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line"></span><br><span class="line">-&gt; Configure other nodes to join this cluster:</span><br><span class="line">* Copy the following enrollment token and start new Elasticsearch nodes with `bin/elasticsearch --enrollment-token &lt;token&gt;` (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlFvN3pEWUFCYVlPRkpUUmxpNkhMOlMzYzVYdWExUkkyWFUtdFZ4U0tENlEifQ==</span><br><span class="line"></span><br><span class="line">  If you&#x27;re running in Docker, copy the enrollment token and run:</span><br><span class="line">  `docker run -e &quot;ENROLLMENT_TOKEN=&lt;token&gt;&quot; docker.elastic.co/elasticsearch/elasticsearch:8.1.2`</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>如果您需要重置的密码<code>弹性的</code>用户或其他内置用户，运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-password.html"><code>弹性搜索-重置-密码</code></a>工具。该工具在弹性搜索中可用<code>/bin</code>Docker容器的目录。例如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</span><br><span class="line"># Password for the [elastic] user successfully reset.</span><br><span class="line"># New value: 4GlsHFPF1kbh8_i4*A3I</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>复制<code>http_ca.crt</code>从Docker容器到本地机器的安全证书。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>打开一个新的终端，使用<code>http_ca.crt</code>从Docker容器中复制的文件。输入的密码<code>弹性的</code>出现提示时的用户。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl --cacert http_ca.crt -u elastic https://localhost:9200</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>生成注册令牌</strong></p>
+<p>注册令牌的有效期为30分钟。如果需要生成新的注册令牌，请运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/create-enrollment-token.html"><code>弹性搜索-创建-注册-令牌</code></a>现有节点上的工具。该工具在弹性搜索中可用<code>容器</code>docker容器的目录。</p>
+<p>例如，在现有的上运行以下命令<code>es01</code>为新的弹性搜索节点生成注册令牌的节点:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node</span><br><span class="line"></span><br><span class="line"># eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklfQzhEb0FCWmlRQnRCNGFiLVRuOnlwMzZET0Y0VHAtNzd1SC1yMUYzbGcifQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在启动第一个节点的终端中，复制generatedenrollment令牌以添加新的Elasticsearch节点。在您的新节点上，启动Elasticsearch并包含生成的注册令牌。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -e ENROLLMENT_TOKEN=&quot;&lt;token&gt;&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"></span><br><span class="line"># docker run -e ENROLLMENT_TOKEN=&quot;eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklmQUpEb0FCWmlRQnRCNGFKdVQ2OlUwODhtejV2U0EtaWowaGlHRVRkOGcifQ==&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"># 如果失败可能是内存溢出</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h4><p><a href="https://www.cnblogs.com/linjiqin/p/12103645.html">https://www.cnblogs.com/linjiqin/p/12103645.html</a></p>
+<h4 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull kibana:8.0.0</span><br></pre></td></tr></table></figure>
+
+<p>文档地址</p>
+<p><a href="https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450">https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>vi&#x2F;vim：容器内无法使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it -u 0 容器名称/id /bin/bash</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install vim*</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>apt-get 在容器内会提示一个路径错误。是因为权限不足。在进入容器时声明权限<code>-u 0</code>使用root权限进入。</p>
+<p><em>apt-get</em>，是一条linux命令，适用于deb包管理式的操作系统，主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。</p>
+<p>此处可以理解centos 使用 yum 安装软件。Ubuntu 使用 apt-get。但是Linux环境下的docker是使用apt-get。包管理跟操作系统无关。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>deploy</category>
+      </categories>
+      <tags>
+        <tag>dotnet</tag>
+        <tag>elk</tag>
+        <tag>elasticsearch</tag>
+        <tag>elastic</tag>
+        <tag>Kibana</tag>
       </tags>
   </entry>
   <entry>
