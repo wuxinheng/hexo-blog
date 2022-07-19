@@ -9,7 +9,7 @@ description: '不积硅步无以至千里,不积小流无以成江海'
 keywords: keywords
 author: wuxinheng
 language: zh-CN
-timezone: ''
+timezone: 
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
@@ -95,7 +95,7 @@ exclude:
 ignore:
 
 # Extensions
-## Plugins: https://hexo.io/plugins/
+# Plugins: hexo-generate-feed
 ## Themes: https://hexo.io/themes/
 # landscape
 theme: next
@@ -139,3 +139,21 @@ search:
   field: post
   format: html
   limit: 10000
+
+post_wordcount:
+  item_text: true
+  wordcount: true         # 单篇 字数统计
+  min2read: true          # 单篇 阅读时长
+  totalcount: false       # 网站 字数统计
+  separated_meta: true
+
+# Extensions
+## Plugins: http://hexo.io/plugins/
+#RSS订阅
+plugin:
+- hexo-generator-feed
+#Feed Atom
+feed:
+type: atom
+path: atom.xml
+limit: 20
