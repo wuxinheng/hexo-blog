@@ -15,7 +15,7 @@ categories:
 
 ### ELK 安装
 
-![](C:\Users\Administrator\Desktop\docs\images\操作系统\linux使用\elkinfo.jpeg)
+![](../images/elkinfo.jpeg)
 
 #### Elasticsearch
 
