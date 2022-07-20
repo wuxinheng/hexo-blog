@@ -6,7 +6,7 @@
   <link href="http://xblogs.net/atom.xml" rel="self"/>
   
 <link href="http://xblogs.net/"/>
-<updated>2022-07-19T01:08:09.730Z</updated>
+<updated>2022-07-20T04:33:46.503Z</updated>
 <id>http://xblogs.net/</id>
   
 <author>
@@ -15,6 +15,25 @@
 </author>
   
 <generator uri="https://hexo.io/">Hexo</generator>
+  
+<entry>
+  <title>linux 虚拟机没有ens33网卡信息</title>
+  <link href="http://xblogs.net/2022/07/19/linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%B2%A1%E6%9C%89ens33%E7%BD%91%E5%8D%A1%E4%BF%A1%E6%81%AF/"/>
+  <id>http://xblogs.net/2022/07/19/linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%B2%A1%E6%9C%89ens33%E7%BD%91%E5%8D%A1%E4%BF%A1%E6%81%AF/</id>
+  <published>2022-07-19T13:36:00.000Z</published>
+  <updated>2022-07-20T04:33:46.503Z</updated>
+    
+  <content type="html"><![CDATA[<p>使用ifconfig遇到没有ens33网络信息</p><p>电脑上VMware 创建了三台虚拟机。其中一台无法连接网络我更改了网络连接设置为NAT模式，然后重启还是不行。<br>参照网友@<a href="https://blog.csdn.net/weixin_53685939/article/details/119732919">白天不懂夜的美♂</a></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop NetworkManager</span><br><span class="line">systemctl restart network.service</span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure><p>成功恢复！</p>]]></content>
+    
+    
+  <summary type="html">linux 虚拟机没有ens33网卡信息，重启网络服务解决</summary>
+    
+    
+    
+    
+  <category term="虚拟机网络" scheme="http://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+</entry>
   
 <entry>
   <title>docker-compose</title>
@@ -58,6 +77,8 @@
     
   <category term="docker" scheme="http://xblogs.net/tags/docker/"/>
     
+  <category term="jenkis" scheme="http://xblogs.net/tags/jenkis/"/>
+    
   <category term="jenkins" scheme="http://xblogs.net/tags/jenkins/"/>
     
   <category term="shell" scheme="http://xblogs.net/tags/shell/"/>
@@ -67,37 +88,6 @@
   <category term="sh" scheme="http://xblogs.net/tags/sh/"/>
     
   <category term="deploy" scheme="http://xblogs.net/tags/deploy/"/>
-    
-  <category term="jenkis" scheme="http://xblogs.net/tags/jenkis/"/>
-    
-</entry>
-  
-<entry>
-  <title>在docker中部署elk</title>
-  <link href="http://xblogs.net/2022/07/15/elk/"/>
-  <id>http://xblogs.net/2022/07/15/elk/</id>
-  <published>2022-07-15T12:48:00.000Z</published>
-  <updated>2022-07-19T01:08:09.732Z</updated>
-    
-  <content type="html"><![CDATA[<h3 id="ELK-安装"><a href="#ELK-安装" class="headerlink" title="ELK 安装"></a>ELK 安装</h3><p><img src="C:\Users\Administrator\Desktop\docs\images\操作系统\linux使用\elkinfo.jpeg"></p><h4 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h4><p><a href="https://www.elastic.co/cn/downloads/elasticsearch">下载地址&#x2F;文档</a></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure><blockquote><p>从Elasticsearch 8.0开始，默认启用安全性。启用安全保护后，弹性堆栈安全功能要求对传输网络层进行TLS加密，否则您的群集将无法启动。</p></blockquote><ol><li><p>为Elasticsearch和Kibana创建一个新的docker网络</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create elastic</span><br></pre></td></tr></table></figure></li><li><p>在Docker中启动Elasticsearch。为生成一个密码弹性的用户和终端的输出，以及用于注册Kibana的注册令牌。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always -d --name es01 --net elastic -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure></li><li><p>复制生成的密码和注册令牌，并将其保存在安全位置。这些值仅在首次启动Elasticsearch时显示。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Elasticsearch security features have been automatically configured!</span><br><span class="line">-&gt; Authentication is enabled and cluster connections are encrypted.</span><br><span class="line"></span><br><span class="line"># 账号：elastic；初始密码：+x96YH3NDGmxG-aQ4M8P；重置密码命令：bin/elasticsearch-reset-password -u elastic</span><br><span class="line">-&gt;  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):</span><br><span class="line">  +x96YH3NDGmxG-aQ4M8P</span><br><span class="line"></span><br><span class="line"># ca证书密钥：41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line">-&gt;  HTTP CA certificate SHA-256 fingerprint:</span><br><span class="line">  41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line"></span><br><span class="line"># kibana初始化注册密钥：</span><br><span class="line">eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line">-&gt;  Configure Kibana to use this cluster:</span><br><span class="line">* Run Kibana and click the configuration link in the terminal when Kibana starts.</span><br><span class="line">* Copy the following enrollment token and paste it into Kibana in your browser (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line"></span><br><span class="line">-&gt; Configure other nodes to join this cluster:</span><br><span class="line">* Copy the following enrollment token and start new Elasticsearch nodes with `bin/elasticsearch --enrollment-token &lt;token&gt;` (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlFvN3pEWUFCYVlPRkpUUmxpNkhMOlMzYzVYdWExUkkyWFUtdFZ4U0tENlEifQ==</span><br><span class="line"></span><br><span class="line">  If you&#x27;re running in Docker, copy the enrollment token and run:</span><br><span class="line">  `docker run -e &quot;ENROLLMENT_TOKEN=&lt;token&gt;&quot; docker.elastic.co/elasticsearch/elasticsearch:8.1.2`</span><br><span class="line"></span><br></pre></td></tr></table></figure><ol><li><p>如果您需要重置的密码<code>弹性的</code>用户或其他内置用户，运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-password.html"><code>弹性搜索-重置-密码</code></a>工具。该工具在弹性搜索中可用<code>/bin</code>Docker容器的目录。例如</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</span><br><span class="line"># Password for the [elastic] user successfully reset.</span><br><span class="line"># New value: 4GlsHFPF1kbh8_i4*A3I</span><br></pre></td></tr></table></figure></li></ol></li><li><p>复制<code>http_ca.crt</code>从Docker容器到本地机器的安全证书。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .</span><br></pre></td></tr></table></figure></li><li><p>打开一个新的终端，使用<code>http_ca.crt</code>从Docker容器中复制的文件。输入的密码<code>弹性的</code>出现提示时的用户。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --cacert http_ca.crt -u elastic https://localhost:9200</span><br></pre></td></tr></table></figure></li><li><p><strong>生成注册令牌</strong></p><p>注册令牌的有效期为30分钟。如果需要生成新的注册令牌，请运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/create-enrollment-token.html"><code>弹性搜索-创建-注册-令牌</code></a>现有节点上的工具。该工具在弹性搜索中可用<code>容器</code>docker容器的目录。</p><p>例如，在现有的上运行以下命令<code>es01</code>为新的弹性搜索节点生成注册令牌的节点:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node</span><br><span class="line"></span><br><span class="line"># eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklfQzhEb0FCWmlRQnRCNGFiLVRuOnlwMzZET0Y0VHAtNzd1SC1yMUYzbGcifQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure></li><li><p>在启动第一个节点的终端中，复制generatedenrollment令牌以添加新的Elasticsearch节点。在您的新节点上，启动Elasticsearch并包含生成的注册令牌。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -e ENROLLMENT_TOKEN=&quot;&lt;token&gt;&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"></span><br><span class="line"># docker run -e ENROLLMENT_TOKEN=&quot;eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklmQUpEb0FCWmlRQnRCNGFKdVQ2OlUwODhtejV2U0EtaWowaGlHRVRkOGcifQ==&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"># 如果失败可能是内存溢出</span><br></pre></td></tr></table></figure></li></ol><h4 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h4><p><a href="https://www.cnblogs.com/linjiqin/p/12103645.html">https://www.cnblogs.com/linjiqin/p/12103645.html</a></p><h4 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull kibana:8.0.0</span><br></pre></td></tr></table></figure><p>文档地址</p><p><a href="https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450">https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p><h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>vi&#x2F;vim：容器内无法使用</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it -u 0 容器名称/id /bin/bash</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install vim*</span><br></pre></td></tr></table></figure><blockquote><p>apt-get 在容器内会提示一个路径错误。是因为权限不足。在进入容器时声明权限<code>-u 0</code>使用root权限进入。</p><p><em>apt-get</em>，是一条linux命令，适用于deb包管理式的操作系统，主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。</p><p>此处可以理解centos 使用 yum 安装软件。Ubuntu 使用 apt-get。但是Linux环境下的docker是使用apt-get。包管理跟操作系统无关。</p></blockquote>]]></content>
-    
-    
-  <summary type="html">本文怎么在docker中部署elk以及常见问题</summary>
-    
-    
-    
-  <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
-    
-    
-  <category term="elk" scheme="http://xblogs.net/tags/elk/"/>
-    
-  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
-    
-  <category term="elasticsearch" scheme="http://xblogs.net/tags/elasticsearch/"/>
-    
-  <category term="elastic" scheme="http://xblogs.net/tags/elastic/"/>
-    
-  <category term="Kibana" scheme="http://xblogs.net/tags/Kibana/"/>
     
 </entry>
   
@@ -118,13 +108,42 @@
   <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
     
     
-  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
-    
   <category term="NuGet私有化" scheme="http://xblogs.net/tags/NuGet%E7%A7%81%E6%9C%89%E5%8C%96/"/>
     
   <category term="docker" scheme="http://xblogs.net/tags/docker/"/>
     
+  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
+    
   <category term="批量上传nupkg" scheme="http://xblogs.net/tags/%E6%89%B9%E9%87%8F%E4%B8%8A%E4%BC%A0nupkg/"/>
+    
+</entry>
+  
+<entry>
+  <title>在docker中部署elk</title>
+  <link href="http://xblogs.net/2022/07/15/elk/"/>
+  <id>http://xblogs.net/2022/07/15/elk/</id>
+  <published>2022-07-15T12:48:00.000Z</published>
+  <updated>2022-07-20T04:29:16.456Z</updated>
+    
+  <content type="html"><![CDATA[<h3 id="ELK-安装"><a href="#ELK-安装" class="headerlink" title="ELK 安装"></a>ELK 安装</h3><p><img src="/../images/elkinfo.jpeg"></p><h4 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h4><p><a href="https://www.elastic.co/cn/downloads/elasticsearch">下载地址&#x2F;文档</a></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure><blockquote><p>从Elasticsearch 8.0开始，默认启用安全性。启用安全保护后，弹性堆栈安全功能要求对传输网络层进行TLS加密，否则您的群集将无法启动。</p></blockquote><ol><li><p>为Elasticsearch和Kibana创建一个新的docker网络</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create elastic</span><br></pre></td></tr></table></figure></li><li><p>在Docker中启动Elasticsearch。为生成一个密码弹性的用户和终端的输出，以及用于注册Kibana的注册令牌。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always -d --name es01 --net elastic -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure></li><li><p>复制生成的密码和注册令牌，并将其保存在安全位置。这些值仅在首次启动Elasticsearch时显示。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Elasticsearch security features have been automatically configured!</span><br><span class="line">-&gt; Authentication is enabled and cluster connections are encrypted.</span><br><span class="line"></span><br><span class="line"># 账号：elastic；初始密码：+x96YH3NDGmxG-aQ4M8P；重置密码命令：bin/elasticsearch-reset-password -u elastic</span><br><span class="line">-&gt;  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):</span><br><span class="line">  +x96YH3NDGmxG-aQ4M8P</span><br><span class="line"></span><br><span class="line"># ca证书密钥：41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line">-&gt;  HTTP CA certificate SHA-256 fingerprint:</span><br><span class="line">  41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line"></span><br><span class="line"># kibana初始化注册密钥：</span><br><span class="line">eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line">-&gt;  Configure Kibana to use this cluster:</span><br><span class="line">* Run Kibana and click the configuration link in the terminal when Kibana starts.</span><br><span class="line">* Copy the following enrollment token and paste it into Kibana in your browser (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line"></span><br><span class="line">-&gt; Configure other nodes to join this cluster:</span><br><span class="line">* Copy the following enrollment token and start new Elasticsearch nodes with `bin/elasticsearch --enrollment-token &lt;token&gt;` (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlFvN3pEWUFCYVlPRkpUUmxpNkhMOlMzYzVYdWExUkkyWFUtdFZ4U0tENlEifQ==</span><br><span class="line"></span><br><span class="line">  If you&#x27;re running in Docker, copy the enrollment token and run:</span><br><span class="line">  `docker run -e &quot;ENROLLMENT_TOKEN=&lt;token&gt;&quot; docker.elastic.co/elasticsearch/elasticsearch:8.1.2`</span><br><span class="line"></span><br></pre></td></tr></table></figure><ol><li><p>如果您需要重置的密码<code>弹性的</code>用户或其他内置用户，运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-password.html"><code>弹性搜索-重置-密码</code></a>工具。该工具在弹性搜索中可用<code>/bin</code>Docker容器的目录。例如</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</span><br><span class="line"># Password for the [elastic] user successfully reset.</span><br><span class="line"># New value: 4GlsHFPF1kbh8_i4*A3I</span><br></pre></td></tr></table></figure></li></ol></li><li><p>复制<code>http_ca.crt</code>从Docker容器到本地机器的安全证书。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .</span><br></pre></td></tr></table></figure></li><li><p>打开一个新的终端，使用<code>http_ca.crt</code>从Docker容器中复制的文件。输入的密码<code>弹性的</code>出现提示时的用户。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --cacert http_ca.crt -u elastic https://localhost:9200</span><br></pre></td></tr></table></figure></li><li><p><strong>生成注册令牌</strong></p><p>注册令牌的有效期为30分钟。如果需要生成新的注册令牌，请运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/create-enrollment-token.html"><code>弹性搜索-创建-注册-令牌</code></a>现有节点上的工具。该工具在弹性搜索中可用<code>容器</code>docker容器的目录。</p><p>例如，在现有的上运行以下命令<code>es01</code>为新的弹性搜索节点生成注册令牌的节点:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node</span><br><span class="line"></span><br><span class="line"># eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklfQzhEb0FCWmlRQnRCNGFiLVRuOnlwMzZET0Y0VHAtNzd1SC1yMUYzbGcifQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure></li><li><p>在启动第一个节点的终端中，复制generatedenrollment令牌以添加新的Elasticsearch节点。在您的新节点上，启动Elasticsearch并包含生成的注册令牌。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -e ENROLLMENT_TOKEN=&quot;&lt;token&gt;&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"></span><br><span class="line"># docker run -e ENROLLMENT_TOKEN=&quot;eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklmQUpEb0FCWmlRQnRCNGFKdVQ2OlUwODhtejV2U0EtaWowaGlHRVRkOGcifQ==&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"># 如果失败可能是内存溢出</span><br></pre></td></tr></table></figure></li></ol><h4 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h4><p><a href="https://www.cnblogs.com/linjiqin/p/12103645.html">https://www.cnblogs.com/linjiqin/p/12103645.html</a></p><h4 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull kibana:8.0.0</span><br></pre></td></tr></table></figure><p>文档地址</p><p><a href="https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450">https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p><h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>vi&#x2F;vim：容器内无法使用</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it -u 0 容器名称/id /bin/bash</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install vim*</span><br></pre></td></tr></table></figure><blockquote><p>apt-get 在容器内会提示一个路径错误。是因为权限不足。在进入容器时声明权限<code>-u 0</code>使用root权限进入。</p><p><em>apt-get</em>，是一条linux命令，适用于deb包管理式的操作系统，主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。</p><p>此处可以理解centos 使用 yum 安装软件。Ubuntu 使用 apt-get。但是Linux环境下的docker是使用apt-get。包管理跟操作系统无关。</p></blockquote>]]></content>
+    
+    
+  <summary type="html">本文怎么在docker中部署elk以及常见问题</summary>
+    
+    
+    
+  <category term="deploy" scheme="http://xblogs.net/categories/deploy/"/>
+    
+    
+  <category term="dotnet" scheme="http://xblogs.net/tags/dotnet/"/>
+    
+  <category term="elk" scheme="http://xblogs.net/tags/elk/"/>
+    
+  <category term="elasticsearch" scheme="http://xblogs.net/tags/elasticsearch/"/>
+    
+  <category term="elastic" scheme="http://xblogs.net/tags/elastic/"/>
+    
+  <category term="Kibana" scheme="http://xblogs.net/tags/Kibana/"/>
     
 </entry>
   
@@ -247,8 +266,6 @@
   <category term="jenkins" scheme="http://xblogs.net/categories/jenkins/"/>
     
     
-  <category term="jenkis" scheme="http://xblogs.net/tags/jenkis/"/>
-    
   <category term="CI/CD" scheme="http://xblogs.net/tags/CI-CD/"/>
     
   <category term="docker构建jenkins" scheme="http://xblogs.net/tags/docker%E6%9E%84%E5%BB%BAjenkins/"/>
@@ -258,6 +275,8 @@
   <category term="jenkis部署uniapp" scheme="http://xblogs.net/tags/jenkis%E9%83%A8%E7%BD%B2uniapp/"/>
     
   <category term="uniapp自动推送微信" scheme="http://xblogs.net/tags/uniapp%E8%87%AA%E5%8A%A8%E6%8E%A8%E9%80%81%E5%BE%AE%E4%BF%A1/"/>
+    
+  <category term="jenkis" scheme="http://xblogs.net/tags/jenkis/"/>
     
 </entry>
   
