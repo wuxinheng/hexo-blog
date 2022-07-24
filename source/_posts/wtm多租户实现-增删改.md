@@ -1,17 +1,21 @@
 ---
 title: wtm多租户实现_增删改
 author: wuxinheng
-date: 2022-07-22 22:54:54
 description: EF实现多租户操作数据填充
 tags:
-- efcore
-- saas
-- 多租户
-- EF数据过滤
-- dotnet
+  - efcore
+  - saas
+  - 多租户
+  - EF数据过滤
+  - dotnet
 categories:
-- wtm
+  - wtm
+date: 2022-07-22 22:54:54
 ---
+wtm源码解读_3.md 中数据补充有些其他问题。就是写代码的人不遵守wtm的原则来写可能会逃避掉数据补充方法。
+我们这里处理的方式可能粗暴点，直接重写datacontext中SaveChanges()
+
+```C#
 public override int SaveChanges()
 {
     // 多端数据过滤判断
@@ -57,3 +61,4 @@ private void UpdateTenantCode()
         }
     }
 }
+```

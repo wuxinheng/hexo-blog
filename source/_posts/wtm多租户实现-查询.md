@@ -1,17 +1,26 @@
 ---
 title: wtm多租户实现_查询
 author: wuxinheng
-date: 2022-07-22 22:54:39
 description: EF实现多租户查询过滤
 tags:
-- efcore
-- saas
-- 多租户
-- EF数据过滤
-- dotnet
+  - efcore
+  - saas
+  - 多租户
+  - EF数据过滤
+  - dotnet
 categories:
-- wtm
+  - wtm
+date: 2022-07-22 22:54:39
 ---
+感谢：[说都不会话了(sharding-core作者)](https://github.com/dotnetcore/sharding-core)
+参考：[![返回主页](https://www.cnblogs.com/skins/custom/images/logo.gif)](https://www.cnblogs.com/clis/)[芦荟柚子茶](https://www.cnblogs.com/clis/p/16501586.html)
+
+> 准确来说是EF的全局过滤器使用
+
+一直以来我是错的。DataContext的OnModelCreating其实是在初始化的时候执行。我还以为我每次调用db都会执行，唉~
+TenantCode获取请看wtm源码解读1、2
+
+```C#
 protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // 基本注册
@@ -110,3 +119,17 @@ class ReplaceExpressionVisitor : ExpressionVisitor
         return base.Visit(node)!;
     }
 }
+```
+
+表达式短路,有意思
+
+```sql
+where 1=1 or tenant_id='123' 租户id不会生效
+where 1=2 or tenant_id='123' 租户id会生效
+--这里其实是通过IgnoreDeleteFilter来进行短路操作，默认为false sql：
+--false
+select id,name,IsValid,TenantCode where (false or IsValid=1) and  (false or TenantCode=1)
+--true 
+select id,name,IsValid,TenantCode where (true or IsValid=1) and  (true or TenantCode=1)
+```
+

@@ -52,7 +52,16 @@
   <entry>
     <title>doker使用</title>
     <url>/2022/07/14/doker/</url>
-    <content><![CDATA[<h1 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo yum install docker-ce</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<h1 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h4 id="yum下载缓慢"><a href="#yum下载缓慢" class="headerlink" title="yum下载缓慢"></a>yum下载缓慢</h4><p>安装yum-utils、lvm2</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo yum install -y yum-utils \device-mapper-persistent-data \lvm2</span><br></pre></td></tr></table></figure>
+
+<p>设置包源,不然搜不到docker-ce</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo yum-config-manager \</span><br><span class="line">    --add-repo \</span><br><span class="line">    https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<p>官方：<code>https://download.docker.com/linux/centos/docker-ce.repo</code></p>
+<p>阿里云：<code>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></p>
+<p>清华：<code>https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/docker-ce.repo</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo yum install docker-ce</span><br></pre></td></tr></table></figure>
 
 <p>启动</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
@@ -582,46 +591,13 @@
   <entry>
     <title>wtm多租户实现_增删改</title>
     <url>/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E5%A2%9E%E5%88%A0%E6%94%B9/</url>
-    <content><![CDATA[<p>public override int SaveChanges()<br>{<br>    &#x2F;&#x2F; 多端数据过滤判断<br>    if (!string.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode !&#x3D; “0”)<br>        UpdateTenantCode();</p>
-<pre><code>return base.SaveChanges();
-</code></pre>
-<p>}</p>
-<p>public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken &#x3D; default(CancellationToken))<br>{<br>    &#x2F;&#x2F;多端数据过滤判断<br>    if (!string.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode !&#x3D; “0”)<br>        UpdateTenantCode();</p>
-<pre><code>return await base.SaveChangesAsync(cancellationToken);
-</code></pre>
-<p>}<br>private void UpdateTenantCode()<br>{</p>
-<pre><code>// 获取所有新增、更新、删除的实体
-var entities = ChangeTracker.Entries().Where(u =&gt; u.State == EntityState.Added || u.State == EntityState.Modified || u.State == EntityState.Deleted);
-
-foreach (var entity in entities)
-&#123;
-    if (typeof(IHasTentant).IsAssignableFrom(entity.Entity.GetType())
-        &amp;&amp; string.IsNullOrEmpty((entity.Entity as IHasTentant).TenantCode))
-    &#123;
-        switch (entity.State)
-        &#123;
-            // 自动设置租户Id
-            case EntityState.Added:
-                entity.Property(nameof(IHasTentant.TenantCode)).CurrentValue = TenantCode;
-                break;
-            // 排除租户Id
-            case EntityState.Modified:
-                entity.Property(nameof(IHasTentant.TenantCode)).IsModified = false;
-                break;
-            // 删除处理
-            case EntityState.Deleted:
-                break;
-        &#125;
-    &#125;
-&#125;
-</code></pre>
-<p>}</p>
-]]></content>
+    <content><![CDATA[<p>wtm源码解读_3.md 中数据补充有些其他问题。就是写代码的人不遵守wtm的原则来写可能会逃避掉数据补充方法。<br>我们这里处理的方式可能粗暴点，直接重写datacontext中SaveChanges()</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="built_in">int</span> <span class="title">SaveChanges</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 多端数据过滤判断</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode != <span class="string">&quot;0&quot;</span>)</span><br><span class="line">        UpdateTenantCode();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">base</span>.SaveChanges();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;<span class="built_in">int</span>&gt; <span class="title">SaveChangesAsync</span>(<span class="params">CancellationToken cancellationToken = <span class="literal">default</span>(CancellationToken</span>))</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//多端数据过滤判断</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode != <span class="string">&quot;0&quot;</span>)</span><br><span class="line">        UpdateTenantCode();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> <span class="keyword">base</span>.SaveChangesAsync(cancellationToken);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">UpdateTenantCode</span>()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有新增、更新、删除的实体</span></span><br><span class="line">    <span class="keyword">var</span> entities = ChangeTracker.Entries().Where(u =&gt; u.State == EntityState.Added || u.State == EntityState.Modified || u.State == EntityState.Deleted);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> entity <span class="keyword">in</span> entities)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entity.Entity.GetType())</span><br><span class="line">            &amp;&amp; <span class="built_in">string</span>.IsNullOrEmpty((entity.Entity <span class="keyword">as</span> IHasTentant).TenantCode))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">switch</span> (entity.State)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 自动设置租户Id</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Added:</span><br><span class="line">                    entity.Property(<span class="keyword">nameof</span>(IHasTentant.TenantCode)).CurrentValue = TenantCode;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 排除租户Id</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Modified:</span><br><span class="line">                    entity.Property(<span class="keyword">nameof</span>(IHasTentant.TenantCode)).IsModified = <span class="literal">false</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 删除处理</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Deleted:</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>wtm</category>
-        <category>dotnet</category>
       </categories>
       <tags>
+        <tag>dotnet</tag>
         <tag>efcore</tag>
         <tag>saas</tag>
         <tag>多租户</tag>
@@ -631,82 +607,16 @@ foreach (var entity in entities)
   <entry>
     <title>wtm多租户实现_查询</title>
     <url>/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/</url>
-    <content><![CDATA[<p>protected override void OnModelCreating(ModelBuilder modelBuilder)<br>        {<br>            &#x2F;&#x2F; 基本注册<br>            &#x2F;&#x2F;builder.Entity<TestDelete>().HasQueryFilter(e &#x3D;&gt; !e.IsDeleted);</p>
-<pre><code>        // 获取model中的类获取程序集，因为model跟datacontext不在一个文件夹下
-        Assembly assembly = typeof(AuditLog).Assembly;
-        // 通过model获取所有的实体类，并进行过滤
-        List&lt;Type&gt; entityTypes = assembly.GetTypes()
-            .Where(t =&gt; t.IsSubclassOf(typeof(BasePoco)) &amp;&amp; !t.IsAbstract)
-            .ToList();
+    <content><![CDATA[<p>感谢：<a href="https://github.com/dotnetcore/sharding-core">说都不会话了(sharding-core作者)</a><br>参考：<a href="https://www.cnblogs.com/clis/"><img src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页"></a><a href="https://www.cnblogs.com/clis/p/16501586.html">芦荟柚子茶</a></p>
+<blockquote>
+<p>准确来说是EF的全局过滤器使用</p>
+</blockquote>
+<p>一直以来我是错的。DataContext的OnModelCreating其实是在初始化的时候执行。我还以为我每次调用db都会执行，唉~<br>TenantCode获取请看wtm源码解读1、2</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnModelCreating</span>(<span class="params">ModelBuilder modelBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 基本注册</span></span><br><span class="line">            <span class="comment">//builder.Entity&lt;TestDelete&gt;().HasQueryFilter(e =&gt; !e.IsDeleted);</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 获取model中的类获取程序集，因为model跟datacontext不在一个文件夹下</span></span><br><span class="line">            Assembly assembly = <span class="keyword">typeof</span>(AuditLog).Assembly;</span><br><span class="line">            <span class="comment">// 通过model获取所有的实体类，并进行过滤</span></span><br><span class="line">            List&lt;Type&gt; entityTypes = assembly.GetTypes()</span><br><span class="line">                .Where(t =&gt; t.IsSubclassOf(<span class="keyword">typeof</span>(BasePoco)) &amp;&amp; !t.IsAbstract)</span><br><span class="line">                .ToList();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获取ConfigureFilters方法</span></span><br><span class="line">            MethodInfo? configureFilters = <span class="keyword">typeof</span>(DataContext).GetMethod(</span><br><span class="line">                <span class="keyword">nameof</span>(ConfigureFilters),</span><br><span class="line">                BindingFlags.Instance | BindingFlags.NonPublic</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (configureFilters == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(<span class="keyword">nameof</span>(configureFilters));</span><br><span class="line">            <span class="comment">// 循环注册</span></span><br><span class="line">            <span class="keyword">foreach</span> (<span class="keyword">var</span> entityType <span class="keyword">in</span> entityTypes)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 注册实体</span></span><br><span class="line">                modelBuilder.Entity(entityType);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 注册筛选器</span></span><br><span class="line">                configureFilters</span><br><span class="line">                    .MakeGenericMethod(entityType)</span><br><span class="line">                    .Invoke(<span class="keyword">this</span>, <span class="keyword">new</span> <span class="built_in">object</span>[] &#123; modelBuilder, entityType &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 控制对象的是否忽略过滤，这句应该放在FrameworkContext中或者等级更高的基类中。</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">bool</span> IgnoreDeleteFilter &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拼接表达式对象，进行注册筛选器。</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">ConfigureFilters</span>&lt;<span class="title">TEntity</span>&gt;(<span class="params">ModelBuilder builder, Type entityType</span>)</span></span><br><span class="line"><span class="function">           <span class="keyword">where</span> TEntity : <span class="keyword">class</span></span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 剩下的是表达式树，我跟芦荟柚子茶一样，不太了解不敢乱说</span></span><br><span class="line">            <span class="comment">// 重要的概念是@说都不会话了 跟我说的关键信息：</span></span><br><span class="line">            <span class="comment">// 1.expression是延迟计算的</span></span><br><span class="line">            <span class="comment">// 2.e只要expression用了局部变量</span></span><br><span class="line">            <span class="comment">// 3.每次执行sql的时候局部变量是重新计算的</span></span><br><span class="line">            <span class="comment">// 表达式短路（第一次听别人说。还是得跟大佬多接触，新奇）</span></span><br><span class="line">            <span class="comment">// 在这还是非常感谢@说都不会话了</span></span><br><span class="line">            Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt;? expression = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IPersistPoco).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                expression = e =&gt; IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">bool</span>&gt;(e, <span class="string">&quot;IsValid&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt; tenantExpression = e =&gt;IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">string</span>&gt;(e, <span class="string">&quot;TenantCode&quot;</span>) == TenantCode;</span><br><span class="line">                expression = expression == <span class="literal">null</span> ? tenantExpression : CombineExpressions(expression, tenantExpression);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (expression == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">            builder.Entity&lt;TEntity&gt;().HasQueryFilter(expression);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="title">Expression</span>&lt;<span class="title">Func</span>&lt;<span class="title">T</span>, <span class="title">bool</span>&gt;&gt; <span class="title">CombineExpressions</span>&lt;<span class="title">T</span>&gt;(<span class="params">Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression1, Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression2</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> parameter = Expression.Parameter(<span class="keyword">typeof</span>(T));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> leftVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression1.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> left = leftVisitor.Visit(expression1.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> rightVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression2.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> right = rightVisitor.Visit(expression2.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> Expression.Lambda&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt;(Expression.AndAlso(left, right), parameter);</span><br><span class="line">        &#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title">ReplaceExpressionVisitor</span> : <span class="title">ExpressionVisitor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _oldValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _newValue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReplaceExpressionVisitor</span>(<span class="params">Expression oldValue, Expression newValue</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _oldValue = oldValue;</span><br><span class="line">        _newValue = newValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Expression <span class="title">Visit</span>(<span class="params">Expression? node</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == _oldValue)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> _newValue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.Visit(node)!;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-        // 获取ConfigureFilters方法
-        MethodInfo? configureFilters = typeof(DataContext).GetMethod(
-            nameof(ConfigureFilters),
-            BindingFlags.Instance | BindingFlags.NonPublic
-        );
+<p>表达式短路,有意思</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id不会生效</span><br><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id会生效</span><br><span class="line"><span class="comment">--这里其实是通过IgnoreDeleteFilter来进行短路操作，默认为false sql：</span></span><br><span class="line"><span class="comment">--false</span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">false</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">false</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line"><span class="comment">--true </span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">true</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">true</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 
-        if (configureFilters == null) throw new ArgumentNullException(nameof(configureFilters));
-        // 循环注册
-        foreach (var entityType in entityTypes)
-        &#123;
-            // 注册实体
-            modelBuilder.Entity(entityType);
-
-            // 注册筛选器
-            configureFilters
-                .MakeGenericMethod(entityType)
-                .Invoke(this, new object[] &#123; modelBuilder, entityType &#125;);
-        &#125;
-    &#125;
-</code></pre>
-<p>&#x2F;&#x2F; 控制对象的是否忽略过滤，这句应该放在FrameworkContext中或者等级更高的基类中。<br>public bool IgnoreDeleteFilter { get; set; } &#x3D; false;</p>
-<p>&#x2F;&#x2F; 拼接表达式对象，进行注册筛选器。<br>protected virtual void ConfigureFilters<TEntity>(ModelBuilder builder, Type entityType)<br>           where TEntity : class<br>        {<br>            &#x2F;&#x2F; 剩下的是表达式树，我跟芦荟柚子茶一样，不太了解不敢乱说<br>            &#x2F;&#x2F; 重要的概念是@说都不会话了 跟我说的关键信息：<br>            &#x2F;&#x2F; 1.expression是延迟计算的<br>            &#x2F;&#x2F; 2.e只要expression用了局部变量<br>            &#x2F;&#x2F; 3.每次执行sql的时候局部变量是重新计算的<br>            &#x2F;&#x2F; 表达式短路（第一次听别人说。还是得跟大佬多接触，新奇）<br>            &#x2F;&#x2F; 在这还是非常感谢@说都不会话了<br>            Expression&lt;Func&lt;TEntity, bool&gt;&gt;? expression &#x3D; null;</p>
-<pre><code>        if (typeof(IPersistPoco).IsAssignableFrom(entityType))
-        &#123;
-            // 表达式短路
-            expression = e =&gt; IgnoreDeleteFilter || EF.Property&lt;bool&gt;(e, &quot;IsValid&quot;);
-        &#125;
-
-        if (typeof(IHasTentant).IsAssignableFrom(entityType))
-        &#123;
-            // 表达式短路
-            Expression&lt;Func&lt;TEntity, bool&gt;&gt; tenantExpression = e =&gt;IgnoreDeleteFilter || EF.Property&lt;string&gt;(e, &quot;TenantCode&quot;) == TenantCode;
-            expression = expression == null ? tenantExpression : CombineExpressions(expression, tenantExpression);
-        &#125;
-
-        if (expression == null) return;
-
-        builder.Entity&lt;TEntity&gt;().HasQueryFilter(expression);
-    &#125;
-</code></pre>
-<p>protected virtual Expression&lt;Func&lt;T, bool&gt;&gt; CombineExpressions<T>(Expression&lt;Func&lt;T, bool&gt;&gt; expression1, Expression&lt;Func&lt;T, bool&gt;&gt; expression2)<br>        {<br>            var parameter &#x3D; Expression.Parameter(typeof(T));</p>
-<pre><code>        var leftVisitor = new ReplaceExpressionVisitor(expression1.Parameters[0], parameter);
-        var left = leftVisitor.Visit(expression1.Body);
-
-        var rightVisitor = new ReplaceExpressionVisitor(expression2.Parameters[0], parameter);
-        var right = rightVisitor.Visit(expression2.Body);
-
-        return Expression.Lambda&lt;Func&lt;T, bool&gt;&gt;(Expression.AndAlso(left, right), parameter);
-    &#125;
-</code></pre>
-<p>class ReplaceExpressionVisitor : ExpressionVisitor<br>{<br>    private readonly Expression _oldValue;<br>    private readonly Expression _newValue;</p>
-<pre><code>public ReplaceExpressionVisitor(Expression oldValue, Expression newValue)
-&#123;
-    _oldValue = oldValue;
-    _newValue = newValue;
-&#125;
-
-public override Expression Visit(Expression? node)
-&#123;
-    if (node == _oldValue)
-    &#123;
-        return _newValue;
-    &#125;
-
-    return base.Visit(node)!;
-&#125;
-</code></pre>
-<p>}</p>
 ]]></content>
       <categories>
         <category>wtm</category>
@@ -755,9 +665,9 @@ public override Expression Visit(Expression? node)
 ]]></content>
       <categories>
         <category>wtm</category>
-        <category>dotnet</category>
       </categories>
       <tags>
+        <tag>dotnet</tag>
         <tag>日志</tag>
       </tags>
   </entry>
@@ -781,6 +691,7 @@ public override Expression Visit(Expression? node)
         <category>wtm</category>
       </categories>
       <tags>
+        <tag>dotnet</tag>
         <tag>efcore</tag>
         <tag>saas</tag>
         <tag>多租户</tag>
@@ -800,8 +711,13 @@ public override Expression Visit(Expression? node)
 ]]></content>
       <categories>
         <category>wtm</category>
-        <category>dotnet</category>
       </categories>
+      <tags>
+        <tag>dotnet</tag>
+        <tag>efcore</tag>
+        <tag>saas</tag>
+        <tag>多租户</tag>
+      </tags>
   </entry>
   <entry>
     <title>wtm血泪</title>
@@ -813,7 +729,6 @@ public override Expression Visit(Expression? node)
 ]]></content>
       <categories>
         <category>wtm</category>
-        <category>dotnet</category>
       </categories>
   </entry>
   <entry>
@@ -859,6 +774,276 @@ public override Expression Visit(Expression? node)
         <tag>efcore</tag>
         <tag>saas</tag>
         <tag>多租户</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker-swarm</title>
+    <url>/2022/07/24/docker-swarm/</url>
+    <content><![CDATA[<h3 id="docker-swarm"><a href="#docker-swarm" class="headerlink" title="docker-swarm"></a>docker-swarm</h3><p>准备三台虚拟机，同一个网络环境</p>
+<p>192.168.85.131</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hostnamectl set-hostname manager01</span><br></pre></td></tr></table></figure>
+
+<p>192.168.85.132</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hostnamectl set-hostname node01</span><br></pre></td></tr></table></figure>
+
+<p>192.168.85.133</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hostnamectl set-hostname node02</span><br></pre></td></tr></table></figure>
+
+<p>初始化swarm</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker swarm init --advertise-addr 192.168.85.131</span><br></pre></td></tr></table></figure>
+
+<p>加入集群的方式</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker swarm join --token SWMTKN-1-4qqtadhn8y0iwkrnl44bsdarokkw9teofoieyn01vnduj88zje-5trtkf44l8w5uft8dkyb26lf9 192.168.85.131:2377</span><br></pre></td></tr></table></figure>
+
+<p>查看节点信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">都可以查看</span></span><br><span class="line">docker info</span><br><span class="line">docker node ls</span><br></pre></td></tr></table></figure>
+
+<p>修改节点状态</p>
+<blockquote>
+<p>drain、active两个状态，设置为drain容器自动删除，并运行在其他节点上。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker node update --availability drain manater01</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--availability 是否可用</span></span><br></pre></td></tr></table></figure>
+
+<p>部署服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker service create --replicas 1 --network nginx_net --name my_nginx -p 80:80 nginx</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--replicas 设置服务实例个数。</span></span><br></pre></td></tr></table></figure>
+
+<p>查看正在运行的服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker service ls</span><br></pre></td></tr></table></figure>
+
+<p>查看运行服务的节点</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker service ps my_nginx</span><br></pre></td></tr></table></figure>
+
+<p>删除服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker service rm my_nginx</span><br></pre></td></tr></table></figure>
+
+<p>查看服务信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker service inspect --pretty my_nginx</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--pretty 人性化打印信息</span></span><br></pre></td></tr></table></figure>
+
+<p>动态设置服务实例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">都可以实现</span></span><br><span class="line">docker service scale my_nginx=4</span><br><span class="line">docker service update --replicas 3 my_nginx</span><br></pre></td></tr></table></figure>
+
+<p>升级服务镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker service update --image nginx:new my_nginx</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">nginx:new [new]新版本或指定版本</span></span><br></pre></td></tr></table></figure>
+
+<p>常用命令</p>
+<h3 id="docker-swarm-常用命令"><a href="#docker-swarm-常用命令" class="headerlink" title="docker swarm 常用命令"></a>docker swarm 常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker swarm init</td>
+<td>初始化集群</td>
+</tr>
+<tr>
+<td>docker swarm join-token worker</td>
+<td>查看工作节点的 token</td>
+</tr>
+<tr>
+<td>docker swarm join-token manager</td>
+<td>查看管理节点的 token</td>
+</tr>
+<tr>
+<td>docker swarm join</td>
+<td>加入集群中</td>
+</tr>
+</tbody></table>
+<h3 id="docker-node-常用命令"><a href="#docker-node-常用命令" class="headerlink" title="docker node 常用命令"></a>docker node 常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker node ls</td>
+<td>查看所有集群节点</td>
+</tr>
+<tr>
+<td>docker node rm</td>
+<td>删除某个节点（<code>-f</code>强制删除）</td>
+</tr>
+<tr>
+<td>docker node inspect</td>
+<td>查看节点详情</td>
+</tr>
+<tr>
+<td>docker node demote</td>
+<td>节点降级，由管理节点降级为工作节点</td>
+</tr>
+<tr>
+<td>docker node promote</td>
+<td>节点升级，由工作节点升级为管理节点</td>
+</tr>
+<tr>
+<td>docker node update</td>
+<td>更新节点</td>
+</tr>
+<tr>
+<td>docker node ps</td>
+<td>查看节点中的 Task 任务</td>
+</tr>
+</tbody></table>
+<h3 id="docker-service-常用命令"><a href="#docker-service-常用命令" class="headerlink" title="docker service 常用命令"></a>docker service 常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker service create</td>
+<td>部署服务</td>
+</tr>
+<tr>
+<td>docker service inspect</td>
+<td>查看服务详情</td>
+</tr>
+<tr>
+<td>docker service logs</td>
+<td>产看某个服务日志</td>
+</tr>
+<tr>
+<td>docker service ls</td>
+<td>查看所有服务详情</td>
+</tr>
+<tr>
+<td>docker service rm</td>
+<td>删除某个服务（<code>-f</code>强制删除）</td>
+</tr>
+<tr>
+<td>docker service scale</td>
+<td>设置某个服务个数</td>
+</tr>
+<tr>
+<td>docker service update</td>
+<td>更新某个服务</td>
+</tr>
+</tbody></table>
+<h3 id="docker-stack-常用命令"><a href="#docker-stack-常用命令" class="headerlink" title="docker stack 常用命令"></a>docker stack 常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker stack deploy</td>
+<td>部署新的堆栈或更新现有堆栈</td>
+</tr>
+<tr>
+<td>docker stack ls</td>
+<td>列出现有堆栈</td>
+</tr>
+<tr>
+<td>docker stack ps</td>
+<td>列出堆栈中的任务</td>
+</tr>
+<tr>
+<td>docker stack rm</td>
+<td>删除堆栈</td>
+</tr>
+<tr>
+<td>docker stack services</td>
+<td>列出堆栈中的服务</td>
+</tr>
+<tr>
+<td>docker stack down</td>
+<td>移除某个堆栈（不会删除数据）</td>
+</tr>
+</tbody></table>
+<p>参考</p>
+<p><a href="https://blog.csdn.net/Olivier0611/article/details/123447725">Docker Swarm_程涯的博客-CSDN博客_docker swarm</a></p>
+<p><a href="https://www.cnblogs.com/xishuai/p/docker-swarm.html">Docker 三剑客之 Docker Swarm - 田园里的蟋蟀 - 博客园 (cnblogs.com)</a></p>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>docker-swarm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker-pack</title>
+    <url>/2022/07/24/docker-pack/</url>
+    <content><![CDATA[<h3 id="docker打包"><a href="#docker打包" class="headerlink" title="docker打包"></a>docker打包</h3><p>将容器打包到镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker commit [-m=<span class="string">&quot;提交的描述信息&quot;</span>] [-a=<span class="string">&quot;创建者&quot;</span>] 容器名称|容器ID 生成的镜像名[:标签名]</span></span><br><span class="line">docker commit -m=&quot;use nginx deploy my-hexo-blog&quot; -a=&quot;wuxinheng&quot; hexo-blog wxh-hexo:1.0</span><br></pre></td></tr></table></figure>
+
+<p>保存镜像到本地</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker save -o 保存的PathName 镜像名:标签</span></span><br><span class="line">docker save -o /wxh-hexo.tar wxh-hexo:1.0</span><br></pre></td></tr></table></figure>
+
+<p>加载镜像文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker load -i 镜像备份文件</span></span><br><span class="line">docker load -i /wxh-hexo.tar</span><br></pre></td></tr></table></figure>
+
+<p>docker登录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">用户名就真是是用户名，不是邮箱</span></span><br><span class="line">docker login</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">docker images ls</span><br></pre></td></tr></table></figure>
+
+<p>提交到镜像仓库</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改标签，会创建一个新的镜像</span></span><br><span class="line">docker tag wxh-hexo:1.0  wuxinheng/wxh-hexo</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">提交镜像，网络不好可能会出现408,多请求就好了，需要把镜像提交到 [用户名]/images</span></span><br><span class="line">docker push wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
+
+<p>拉取镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">网络不好可能会出现408,多请求就好了</span></span><br><span class="line">docker pull wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
+
+<p>运行镜像</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">docker run -d --name hexo -p <span class="number">4000</span>:<span class="number">80</span> wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://blog.csdn.net/Florine113/article/details/121748462">Docker发布镜像时报错denied: requested access to the resource is denied解决办法_刺客765的博客-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/quanqxj/article/details/79479943">解决Error response from daemon: Get https://registry-1.docker.io/v2/library/hello-world/manifests/问题_权权qxj的博客-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/xinaml/article/details/77573644">Docker 容器创建镜像并提交到Docker hub_xinaml的博客-CSDN博客_docker 镜像提交</a></p>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>docker-pack</tag>
+        <tag>镜像制作</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker-momeory</title>
+    <url>/2022/07/24/docker-momeory/</url>
+    <content><![CDATA[<h3 id="docker内存控制"><a href="#docker内存控制" class="headerlink" title="docker内存控制"></a>docker内存控制</h3><p>docker容器默认继承主机所有内存这样非常不好。当内存足就会自动kill掉容器</p>
+<p>实际使用中发现jenkins容器多次被系统终止，因为是自己的服务器只有2G运存。我决定对服务其上的容器进行内存限制</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --name jenkins -p 8081:8080 -m 512m--memory-swap 512m  -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/bin/docker -v /data/jenkins_home:/var/jenkins_home -d jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>名称、简写</th>
+<th>默认</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--memory</code>,<code>-m</code></td>
+<td></td>
+<td>内存限制</td>
+</tr>
+<tr>
+<td><code>--memory-reservation</code></td>
+<td></td>
+<td>内存软限制，单位和-m一致。当设置了这个参数以后，如果宿主机系统内存不足，有新的内存请求时刻，那么linux会尝试从设置了此参数的容器里回收内存，回收的办法就是swap了。那么如果此容器还在继续使用内存，那么此容器会遇到很大的性能下降。</td>
+</tr>
+<tr>
+<td><code>--memory-swap</code></td>
+<td></td>
+<td>交换限制等于内存加交换：“-1”以启用无限制交换，配置容器可以设置的swap大小。此值为-m值加上能达到的swap区大小</td>
+</tr>
+<tr>
+<td><code>--memory-swappiness</code></td>
+<td><code>-1</code></td>
+<td>调整容器内存交换（0 到 100）</td>
+</tr>
+</tbody></table>
+<p>查看容器性能</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker stats</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>momeory</tag>
       </tags>
   </entry>
 </search>

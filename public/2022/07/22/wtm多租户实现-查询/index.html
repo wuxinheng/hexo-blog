@@ -28,8 +28,9 @@
 <meta property="og:site_name" content="xblogs">
 <meta property="og:description" content="EF实现多租户查询过滤">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.cnblogs.com/skins/custom/images/logo.gif">
 <meta property="article:published_time" content="2022-07-22T14:54:39.000Z">
-<meta property="article:modified_time" content="2022-07-22T15:25:34.218Z">
+<meta property="article:modified_time" content="2022-07-24T15:08:15.909Z">
 <meta property="article:author" content="wuxinheng">
 <meta property="article:tag" content="dotnet">
 <meta property="article:tag" content="efcore">
@@ -37,6 +38,7 @@
 <meta property="article:tag" content="多租户">
 <meta property="article:tag" content="EF数据过滤">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.cnblogs.com/skins/custom/images/logo.gif">
 
 
 <link rel="canonical" href="https://xblogs.net/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/">
@@ -93,7 +95,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">40</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">18</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">44</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">7</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">21</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -164,20 +166,20 @@
     <nav class="site-state">
         <div class="site-state-item site-state-posts">
           <a href="/archives/">
-            <span class="site-state-item-count">18</span>
+            <span class="site-state-item-count">21</span>
             <span class="site-state-item-name">日志</span>
           </a>
         </div>
         <div class="site-state-item site-state-categories">
             <a href="/categories/">
-            <span class="site-state-item-count">8</span>
+            <span class="site-state-item-count">7</span>
             <span class="site-state-item-name">分类</span>
             </a>
           
         </div>
         <div class="site-state-item site-state-tags">
             <a href="/tags/">
-            <span class="site-state-item-count">40</span>
+            <span class="site-state-item-count">44</span>
             <span class="site-state-item-name">标签</span>
             </a>
           
@@ -259,9 +261,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-07-22 22:54:39 / 修改时间：23:25:34" itemprop="dateCreated datePublished" datetime="2022-07-22T22:54:39+08:00">2022-07-22</time>
+      <time title="创建时间：2022-07-22 22:54:39" itemprop="dateCreated datePublished" datetime="2022-07-22T22:54:39+08:00">2022-07-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-07-24 23:08:15" itemprop="dateModified" datetime="2022-07-24T23:08:15+08:00">2022-07-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -285,10 +293,10 @@
 
             <div class="post-description">EF实现多租户查询过滤</div>
           <span  title="post.wordcount">
-            553 字
+            710 字
           </span>
           <span title="post.min2read">
-            2 分钟
+            3 分钟
           </span>
         </div>
       </header>
@@ -297,82 +305,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>protected override void OnModelCreating(ModelBuilder modelBuilder)<br>        {<br>            &#x2F;&#x2F; 基本注册<br>            &#x2F;&#x2F;builder.Entity<TestDelete>().HasQueryFilter(e &#x3D;&gt; !e.IsDeleted);</p>
-<pre><code>        // 获取model中的类获取程序集，因为model跟datacontext不在一个文件夹下
-        Assembly assembly = typeof(AuditLog).Assembly;
-        // 通过model获取所有的实体类，并进行过滤
-        List&lt;Type&gt; entityTypes = assembly.GetTypes()
-            .Where(t =&gt; t.IsSubclassOf(typeof(BasePoco)) &amp;&amp; !t.IsAbstract)
-            .ToList();
+        <p>感谢：<a target="_blank" rel="noopener" href="https://github.com/dotnetcore/sharding-core">说都不会话了(sharding-core作者)</a><br>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/clis/"><img src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页"></a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/clis/p/16501586.html">芦荟柚子茶</a></p>
+<blockquote>
+<p>准确来说是EF的全局过滤器使用</p>
+</blockquote>
+<p>一直以来我是错的。DataContext的OnModelCreating其实是在初始化的时候执行。我还以为我每次调用db都会执行，唉~<br>TenantCode获取请看wtm源码解读1、2</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnModelCreating</span>(<span class="params">ModelBuilder modelBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 基本注册</span></span><br><span class="line">            <span class="comment">//builder.Entity&lt;TestDelete&gt;().HasQueryFilter(e =&gt; !e.IsDeleted);</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 获取model中的类获取程序集，因为model跟datacontext不在一个文件夹下</span></span><br><span class="line">            Assembly assembly = <span class="keyword">typeof</span>(AuditLog).Assembly;</span><br><span class="line">            <span class="comment">// 通过model获取所有的实体类，并进行过滤</span></span><br><span class="line">            List&lt;Type&gt; entityTypes = assembly.GetTypes()</span><br><span class="line">                .Where(t =&gt; t.IsSubclassOf(<span class="keyword">typeof</span>(BasePoco)) &amp;&amp; !t.IsAbstract)</span><br><span class="line">                .ToList();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获取ConfigureFilters方法</span></span><br><span class="line">            MethodInfo? configureFilters = <span class="keyword">typeof</span>(DataContext).GetMethod(</span><br><span class="line">                <span class="keyword">nameof</span>(ConfigureFilters),</span><br><span class="line">                BindingFlags.Instance | BindingFlags.NonPublic</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (configureFilters == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(<span class="keyword">nameof</span>(configureFilters));</span><br><span class="line">            <span class="comment">// 循环注册</span></span><br><span class="line">            <span class="keyword">foreach</span> (<span class="keyword">var</span> entityType <span class="keyword">in</span> entityTypes)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 注册实体</span></span><br><span class="line">                modelBuilder.Entity(entityType);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 注册筛选器</span></span><br><span class="line">                configureFilters</span><br><span class="line">                    .MakeGenericMethod(entityType)</span><br><span class="line">                    .Invoke(<span class="keyword">this</span>, <span class="keyword">new</span> <span class="built_in">object</span>[] &#123; modelBuilder, entityType &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 控制对象的是否忽略过滤，这句应该放在FrameworkContext中或者等级更高的基类中。</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">bool</span> IgnoreDeleteFilter &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拼接表达式对象，进行注册筛选器。</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">ConfigureFilters</span>&lt;<span class="title">TEntity</span>&gt;(<span class="params">ModelBuilder builder, Type entityType</span>)</span></span><br><span class="line"><span class="function">           <span class="keyword">where</span> TEntity : <span class="keyword">class</span></span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 剩下的是表达式树，我跟芦荟柚子茶一样，不太了解不敢乱说</span></span><br><span class="line">            <span class="comment">// 重要的概念是@说都不会话了 跟我说的关键信息：</span></span><br><span class="line">            <span class="comment">// 1.expression是延迟计算的</span></span><br><span class="line">            <span class="comment">// 2.e只要expression用了局部变量</span></span><br><span class="line">            <span class="comment">// 3.每次执行sql的时候局部变量是重新计算的</span></span><br><span class="line">            <span class="comment">// 表达式短路（第一次听别人说。还是得跟大佬多接触，新奇）</span></span><br><span class="line">            <span class="comment">// 在这还是非常感谢@说都不会话了</span></span><br><span class="line">            Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt;? expression = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IPersistPoco).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                expression = e =&gt; IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">bool</span>&gt;(e, <span class="string">&quot;IsValid&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt; tenantExpression = e =&gt;IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">string</span>&gt;(e, <span class="string">&quot;TenantCode&quot;</span>) == TenantCode;</span><br><span class="line">                expression = expression == <span class="literal">null</span> ? tenantExpression : CombineExpressions(expression, tenantExpression);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (expression == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">            builder.Entity&lt;TEntity&gt;().HasQueryFilter(expression);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="title">Expression</span>&lt;<span class="title">Func</span>&lt;<span class="title">T</span>, <span class="title">bool</span>&gt;&gt; <span class="title">CombineExpressions</span>&lt;<span class="title">T</span>&gt;(<span class="params">Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression1, Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression2</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> parameter = Expression.Parameter(<span class="keyword">typeof</span>(T));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> leftVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression1.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> left = leftVisitor.Visit(expression1.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> rightVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression2.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> right = rightVisitor.Visit(expression2.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> Expression.Lambda&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt;(Expression.AndAlso(left, right), parameter);</span><br><span class="line">        &#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title">ReplaceExpressionVisitor</span> : <span class="title">ExpressionVisitor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _oldValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _newValue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReplaceExpressionVisitor</span>(<span class="params">Expression oldValue, Expression newValue</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _oldValue = oldValue;</span><br><span class="line">        _newValue = newValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Expression <span class="title">Visit</span>(<span class="params">Expression? node</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == _oldValue)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> _newValue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.Visit(node)!;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-        // 获取ConfigureFilters方法
-        MethodInfo? configureFilters = typeof(DataContext).GetMethod(
-            nameof(ConfigureFilters),
-            BindingFlags.Instance | BindingFlags.NonPublic
-        );
+<p>表达式短路,有意思</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id不会生效</span><br><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id会生效</span><br><span class="line"><span class="comment">--这里其实是通过IgnoreDeleteFilter来进行短路操作，默认为false sql：</span></span><br><span class="line"><span class="comment">--false</span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">false</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">false</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line"><span class="comment">--true </span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">true</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">true</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 
-        if (configureFilters == null) throw new ArgumentNullException(nameof(configureFilters));
-        // 循环注册
-        foreach (var entityType in entityTypes)
-        &#123;
-            // 注册实体
-            modelBuilder.Entity(entityType);
-
-            // 注册筛选器
-            configureFilters
-                .MakeGenericMethod(entityType)
-                .Invoke(this, new object[] &#123; modelBuilder, entityType &#125;);
-        &#125;
-    &#125;
-</code></pre>
-<p>&#x2F;&#x2F; 控制对象的是否忽略过滤，这句应该放在FrameworkContext中或者等级更高的基类中。<br>public bool IgnoreDeleteFilter { get; set; } &#x3D; false;</p>
-<p>&#x2F;&#x2F; 拼接表达式对象，进行注册筛选器。<br>protected virtual void ConfigureFilters<TEntity>(ModelBuilder builder, Type entityType)<br>           where TEntity : class<br>        {<br>            &#x2F;&#x2F; 剩下的是表达式树，我跟芦荟柚子茶一样，不太了解不敢乱说<br>            &#x2F;&#x2F; 重要的概念是@说都不会话了 跟我说的关键信息：<br>            &#x2F;&#x2F; 1.expression是延迟计算的<br>            &#x2F;&#x2F; 2.e只要expression用了局部变量<br>            &#x2F;&#x2F; 3.每次执行sql的时候局部变量是重新计算的<br>            &#x2F;&#x2F; 表达式短路（第一次听别人说。还是得跟大佬多接触，新奇）<br>            &#x2F;&#x2F; 在这还是非常感谢@说都不会话了<br>            Expression&lt;Func&lt;TEntity, bool&gt;&gt;? expression &#x3D; null;</p>
-<pre><code>        if (typeof(IPersistPoco).IsAssignableFrom(entityType))
-        &#123;
-            // 表达式短路
-            expression = e =&gt; IgnoreDeleteFilter || EF.Property&lt;bool&gt;(e, &quot;IsValid&quot;);
-        &#125;
-
-        if (typeof(IHasTentant).IsAssignableFrom(entityType))
-        &#123;
-            // 表达式短路
-            Expression&lt;Func&lt;TEntity, bool&gt;&gt; tenantExpression = e =&gt;IgnoreDeleteFilter || EF.Property&lt;string&gt;(e, &quot;TenantCode&quot;) == TenantCode;
-            expression = expression == null ? tenantExpression : CombineExpressions(expression, tenantExpression);
-        &#125;
-
-        if (expression == null) return;
-
-        builder.Entity&lt;TEntity&gt;().HasQueryFilter(expression);
-    &#125;
-</code></pre>
-<p>protected virtual Expression&lt;Func&lt;T, bool&gt;&gt; CombineExpressions<T>(Expression&lt;Func&lt;T, bool&gt;&gt; expression1, Expression&lt;Func&lt;T, bool&gt;&gt; expression2)<br>        {<br>            var parameter &#x3D; Expression.Parameter(typeof(T));</p>
-<pre><code>        var leftVisitor = new ReplaceExpressionVisitor(expression1.Parameters[0], parameter);
-        var left = leftVisitor.Visit(expression1.Body);
-
-        var rightVisitor = new ReplaceExpressionVisitor(expression2.Parameters[0], parameter);
-        var right = rightVisitor.Visit(expression2.Body);
-
-        return Expression.Lambda&lt;Func&lt;T, bool&gt;&gt;(Expression.AndAlso(left, right), parameter);
-    &#125;
-</code></pre>
-<p>class ReplaceExpressionVisitor : ExpressionVisitor<br>{<br>    private readonly Expression _oldValue;<br>    private readonly Expression _newValue;</p>
-<pre><code>public ReplaceExpressionVisitor(Expression oldValue, Expression newValue)
-&#123;
-    _oldValue = oldValue;
-    _newValue = newValue;
-&#125;
-
-public override Expression Visit(Expression? node)
-&#123;
-    if (node == _oldValue)
-    &#123;
-        return _newValue;
-    &#125;
-
-    return base.Visit(node)!;
-&#125;
-</code></pre>
-<p>}</p>
 
     </div>
 

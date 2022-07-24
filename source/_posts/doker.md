@@ -11,6 +11,27 @@ date: 2022-07-14 22:45:00
 # docker
 
 ## 安装
+#### yum下载缓慢
+
+安装yum-utils、lvm2
+
+```
+sudo yum install -y yum-utils \device-mapper-persistent-data \lvm2
+```
+
+设置包源,不然搜不到docker-ce
+
+```
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+官方：`https://download.docker.com/linux/centos/docker-ce.repo`
+
+阿里云：`http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo`
+
+清华：`https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/docker-ce.repo`
 
 ```shell
 sudo yum install docker-ce
