@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://xblogs.net/2022/07/25/docker-machine/</loc>
+    <loc>https://xblogs.net/2022/07/15/wtm/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/18/docker-compose/</loc>
+    <loc>https://xblogs.net/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -20,7 +20,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/22/wtm%E8%A1%80%E6%B3%AA/</loc>
+    <loc>https://xblogs.net/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E5%A2%9E%E5%88%A0%E6%94%B9/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -30,6 +30,15 @@
   
   <url>
     <loc>https://xblogs.net/2022/07/22/wtm%E6%97%A5%E5%BF%97%E5%AE%9E%E7%8E%B0/</loc>
+    
+    <lastmod>2022-07-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/07/22/wtm%E8%A1%80%E6%B3%AA/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -65,7 +74,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/14/doker/</loc>
+    <loc>https://xblogs.net/2022/07/11/nginx/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -74,7 +83,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E5%A2%9E%E5%88%A0%E6%94%B9/</loc>
+    <loc>https://xblogs.net/2022/07/15/mysql/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -83,7 +92,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/</loc>
+    <loc>https://xblogs.net/2022/07/15/micro_services/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -92,7 +101,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/24/docker-momeory/</loc>
+    <loc>https://xblogs.net/2022/07/19/linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%B2%A1%E6%9C%89ens33%E7%BD%91%E5%8D%A1%E4%BF%A1%E6%81%AF/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -101,7 +110,16 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/24/docker-swarm/</loc>
+    <loc>https://xblogs.net/2022/07/15/install_jenkins/</loc>
+    
+    <lastmod>2022-07-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/07/15/elk/</loc>
     
     <lastmod>2022-07-25</lastmod>
     
@@ -119,18 +137,54 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/19/linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%B2%A1%E6%9C%89ens33%E7%BD%91%E5%8D%A1%E4%BF%A1%E6%81%AF/</loc>
+    <loc>https://xblogs.net/2022/07/24/docker-momeory/</loc>
     
-    <lastmod>2022-07-20</lastmod>
+    <lastmod>2022-07-25</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/15/elk/</loc>
+    <loc>https://xblogs.net/2022/07/15/baget/</loc>
     
-    <lastmod>2022-07-20</lastmod>
+    <lastmod>2022-07-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/07/25/docker-machine/</loc>
+    
+    <lastmod>2022-07-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/07/18/docker-compose/</loc>
+    
+    <lastmod>2022-07-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/07/14/doker/</loc>
+    
+    <lastmod>2022-07-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/07/24/docker-swarm/</loc>
+    
+    <lastmod>2022-07-25</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -146,61 +200,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/2022/07/15/wtm/</loc>
-    
-    <lastmod>2022-07-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/2022/07/11/nginx/</loc>
-    
-    <lastmod>2022-07-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://xblogs.net/2022/07/13/jenkins/</loc>
-    
-    <lastmod>2022-07-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/2022/07/15/micro_services/</loc>
-    
-    <lastmod>2022-07-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/2022/07/15/mysql/</loc>
-    
-    <lastmod>2022-07-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/2022/07/15/install_jenkins/</loc>
-    
-    <lastmod>2022-07-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/2022/07/15/baget/</loc>
     
     <lastmod>2022-07-19</lastmod>
     
@@ -254,7 +254,7 @@
 
   
   <url>
-    <loc>https://xblogs.net/tags/NuGet%E7%A7%81%E6%9C%89%E5%8C%96/</loc>
+    <loc>https://xblogs.net/tags/deploy/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -282,56 +282,14 @@
   </url>
   
   <url>
+    <loc>https://xblogs.net/tags/bat/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://xblogs.net/tags/docker-compose/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/docker-machine/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/%E7%94%B5%E8%84%91%E5%BC%80%E5%90%AF%E8%99%9A%E6%8B%9F%E6%8D%A2CPU/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/VT-x/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/Vt-d/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/vm/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/momeory/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -366,42 +324,70 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/jenkins/</loc>
+    <loc>https://xblogs.net/tags/docker-machine/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/shell/</loc>
+    <loc>https://xblogs.net/tags/%E7%94%B5%E8%84%91%E5%BC%80%E5%90%AF%E8%99%9A%E6%8B%9F%E6%8D%A2CPU/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/%E8%84%9A%E6%9C%AC/</loc>
+    <loc>https://xblogs.net/tags/VT-x/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/sh/</loc>
+    <loc>https://xblogs.net/tags/VT-d/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/deploy/</loc>
+    <loc>https://xblogs.net/tags/vm/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/jenkis/</loc>
+    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/docker-pack/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/momeory/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E5%AE%B9%E5%99%A8%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -450,21 +436,35 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/docker-pack/</loc>
+    <loc>https://xblogs.net/tags/jenkis/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</loc>
+    <loc>https://xblogs.net/tags/jenkins/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <loc>https://xblogs.net/tags/shell/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E8%84%9A%E6%9C%AC/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/sh/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -499,6 +499,13 @@
   </url>
   
   <url>
+    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://xblogs.net/tags/mysql/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
@@ -513,7 +520,21 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/docker%E9%83%A8%E7%BD%B2wtm/</loc>
+    <loc>https://xblogs.net/tags/nginx%E4%BB%A3%E7%90%86/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/nginx%E9%85%8D%E7%BD%AEssl/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -548,34 +569,6 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/nginx%E4%BB%A3%E7%90%86/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/nginx%E9%85%8D%E7%BD%AEssl/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/%E6%97%A5%E5%BF%97/</loc>
-    <lastmod>2022-07-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://xblogs.net/tags/efcore/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
@@ -603,10 +596,17 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://xblogs.net/tags/%E6%97%A5%E5%BF%97/</loc>
+    <lastmod>2022-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
-    <loc>https://xblogs.net/categories/deploy/</loc>
+    <loc>https://xblogs.net/categories/NuGet%E7%A7%81%E6%9C%89%E5%8C%96/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -634,14 +634,14 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/categories/nginx/</loc>
+    <loc>https://xblogs.net/categories/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/categories/wtm/</loc>
+    <loc>https://xblogs.net/categories/dotnet/</loc>
     <lastmod>2022-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

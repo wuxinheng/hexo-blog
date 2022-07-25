@@ -40,13 +40,14 @@
 
 ]]></content>
       <categories>
-        <category>deploy</category>
+        <category>NuGet私有化</category>
       </categories>
       <tags>
-        <tag>NuGet私有化</tag>
+        <tag>deploy</tag>
         <tag>docker</tag>
         <tag>dotnet</tag>
         <tag>批量上传nupkg</tag>
+        <tag>bat</tag>
       </tags>
   </entry>
   <entry>
@@ -84,6 +85,82 @@
       <tags>
         <tag>dotnet</tag>
         <tag>docker-compose</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在docker中部署elk</title>
+    <url>/2022/07/15/elk/</url>
+    <content><![CDATA[<h3 id="ELK-安装"><a href="#ELK-安装" class="headerlink" title="ELK 安装"></a>ELK 安装</h3><p><img src="/../images/elkinfo.jpeg"></p>
+<h4 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h4><p><a href="https://www.elastic.co/cn/downloads/elasticsearch">下载地址&#x2F;文档</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>从Elasticsearch 8.0开始，默认启用安全性。启用安全保护后，弹性堆栈安全功能要求对传输网络层进行TLS加密，否则您的群集将无法启动。</p>
+</blockquote>
+<ol>
+<li><p>为Elasticsearch和Kibana创建一个新的docker网络</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker network create elastic</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在Docker中启动Elasticsearch。为生成一个密码弹性的用户和终端的输出，以及用于注册Kibana的注册令牌。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -d --name es01 --net elastic -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>复制生成的密码和注册令牌，并将其保存在安全位置。这些值仅在首次启动Elasticsearch时显示。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-&gt; Elasticsearch security features have been automatically configured!</span><br><span class="line">-&gt; Authentication is enabled and cluster connections are encrypted.</span><br><span class="line"></span><br><span class="line"># 账号：elastic；初始密码：+x96YH3NDGmxG-aQ4M8P；重置密码命令：bin/elasticsearch-reset-password -u elastic</span><br><span class="line">-&gt;  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):</span><br><span class="line">  +x96YH3NDGmxG-aQ4M8P</span><br><span class="line"></span><br><span class="line"># ca证书密钥：41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line">-&gt;  HTTP CA certificate SHA-256 fingerprint:</span><br><span class="line">  41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line"></span><br><span class="line"># kibana初始化注册密钥：</span><br><span class="line">eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line">-&gt;  Configure Kibana to use this cluster:</span><br><span class="line">* Run Kibana and click the configuration link in the terminal when Kibana starts.</span><br><span class="line">* Copy the following enrollment token and paste it into Kibana in your browser (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line"></span><br><span class="line">-&gt; Configure other nodes to join this cluster:</span><br><span class="line">* Copy the following enrollment token and start new Elasticsearch nodes with `bin/elasticsearch --enrollment-token &lt;token&gt;` (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlFvN3pEWUFCYVlPRkpUUmxpNkhMOlMzYzVYdWExUkkyWFUtdFZ4U0tENlEifQ==</span><br><span class="line"></span><br><span class="line">  If you&#x27;re running in Docker, copy the enrollment token and run:</span><br><span class="line">  `docker run -e &quot;ENROLLMENT_TOKEN=&lt;token&gt;&quot; docker.elastic.co/elasticsearch/elasticsearch:8.1.2`</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>如果您需要重置的密码<code>弹性的</code>用户或其他内置用户，运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-password.html"><code>弹性搜索-重置-密码</code></a>工具。该工具在弹性搜索中可用<code>/bin</code>Docker容器的目录。例如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</span><br><span class="line"># Password for the [elastic] user successfully reset.</span><br><span class="line"># New value: 4GlsHFPF1kbh8_i4*A3I</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>复制<code>http_ca.crt</code>从Docker容器到本地机器的安全证书。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>打开一个新的终端，使用<code>http_ca.crt</code>从Docker容器中复制的文件。输入的密码<code>弹性的</code>出现提示时的用户。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl --cacert http_ca.crt -u elastic https://localhost:9200</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>生成注册令牌</strong></p>
+<p>注册令牌的有效期为30分钟。如果需要生成新的注册令牌，请运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/create-enrollment-token.html"><code>弹性搜索-创建-注册-令牌</code></a>现有节点上的工具。该工具在弹性搜索中可用<code>容器</code>docker容器的目录。</p>
+<p>例如，在现有的上运行以下命令<code>es01</code>为新的弹性搜索节点生成注册令牌的节点:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node</span><br><span class="line"></span><br><span class="line"># eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklfQzhEb0FCWmlRQnRCNGFiLVRuOnlwMzZET0Y0VHAtNzd1SC1yMUYzbGcifQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在启动第一个节点的终端中，复制generatedenrollment令牌以添加新的Elasticsearch节点。在您的新节点上，启动Elasticsearch并包含生成的注册令牌。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -e ENROLLMENT_TOKEN=&quot;&lt;token&gt;&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"></span><br><span class="line"># docker run -e ENROLLMENT_TOKEN=&quot;eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklmQUpEb0FCWmlRQnRCNGFKdVQ2OlUwODhtejV2U0EtaWowaGlHRVRkOGcifQ==&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"># 如果失败可能是内存溢出</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h4><p><a href="https://www.cnblogs.com/linjiqin/p/12103645.html">https://www.cnblogs.com/linjiqin/p/12103645.html</a></p>
+<h4 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull kibana:8.0.0</span><br></pre></td></tr></table></figure>
+
+<p>文档地址</p>
+<p><a href="https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450">https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>vi&#x2F;vim：容器内无法使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it -u 0 容器名称/id /bin/bash</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install vim*</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>apt-get 在容器内会提示一个路径错误。是因为权限不足。在进入容器时声明权限<code>-u 0</code>使用root权限进入。</p>
+<p><em>apt-get</em>，是一条linux命令，适用于deb包管理式的操作系统，主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。</p>
+<p>此处可以理解centos 使用 yum 安装软件。Ubuntu 使用 apt-get。但是Linux环境下的docker是使用apt-get。包管理跟操作系统无关。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>deploy</tag>
+        <tag>elk</tag>
+        <tag>elasticsearch</tag>
+        <tag>elastic</tag>
+        <tag>Kibana</tag>
       </tags>
   </entry>
   <entry>
@@ -194,9 +271,45 @@
         <tag>docker-machine</tag>
         <tag>电脑开启虚拟换CPU</tag>
         <tag>VT-x</tag>
-        <tag>Vt-d</tag>
+        <tag>VT-d</tag>
         <tag>vm</tag>
         <tag>虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker-pack</title>
+    <url>/2022/07/24/docker-pack/</url>
+    <content><![CDATA[<h3 id="docker打包"><a href="#docker打包" class="headerlink" title="docker打包"></a>docker打包</h3><p>将容器打包到镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker commit [-m=<span class="string">&quot;提交的描述信息&quot;</span>] [-a=<span class="string">&quot;创建者&quot;</span>] 容器名称|容器ID 生成的镜像名[:标签名]</span></span><br><span class="line">docker commit -m=&quot;use nginx deploy my-hexo-blog&quot; -a=&quot;wuxinheng&quot; hexo-blog wxh-hexo:1.0</span><br></pre></td></tr></table></figure>
+
+<p>保存镜像到本地</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker save -o 保存的PathName 镜像名:标签</span></span><br><span class="line">docker save -o /wxh-hexo.tar wxh-hexo:1.0</span><br></pre></td></tr></table></figure>
+
+<p>加载镜像文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker load -i 镜像备份文件</span></span><br><span class="line">docker load -i /wxh-hexo.tar</span><br></pre></td></tr></table></figure>
+
+<p>docker登录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">用户名就真是是用户名，不是邮箱</span></span><br><span class="line">docker login</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">docker images ls</span><br></pre></td></tr></table></figure>
+
+<p>提交到镜像仓库</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改标签，会创建一个新的镜像</span></span><br><span class="line">docker tag wxh-hexo:1.0  wuxinheng/wxh-hexo</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">提交镜像，网络不好可能会出现408,多请求就好了，需要把镜像提交到 [用户名]/images</span></span><br><span class="line">docker push wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
+
+<p>拉取镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">网络不好可能会出现408,多请求就好了</span></span><br><span class="line">docker pull wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
+
+<p>运行镜像</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">docker run -d --name hexo -p <span class="number">4000</span>:<span class="number">80</span> wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://blog.csdn.net/Florine113/article/details/121748462">Docker发布镜像时报错denied: requested access to the resource is denied解决办法_刺客765的博客-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/quanqxj/article/details/79479943">解决Error response from daemon: Get https://registry-1.docker.io/v2/library/hello-world/manifests/问题_权权qxj的博客-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/xinaml/article/details/77573644">Docker 容器创建镜像并提交到Docker hub_xinaml的博客-CSDN博客_docker 镜像提交</a></p>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>docker-pack</tag>
+        <tag>镜像制作</tag>
       </tags>
   </entry>
   <entry>
@@ -242,6 +355,7 @@
       </categories>
       <tags>
         <tag>momeory</tag>
+        <tag>容器内存控制</tag>
       </tags>
   </entry>
   <entry>
@@ -382,101 +496,6 @@
       </categories>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在docker中部署elk</title>
-    <url>/2022/07/15/elk/</url>
-    <content><![CDATA[<h3 id="ELK-安装"><a href="#ELK-安装" class="headerlink" title="ELK 安装"></a>ELK 安装</h3><p><img src="/../images/elkinfo.jpeg"></p>
-<h4 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h4><p><a href="https://www.elastic.co/cn/downloads/elasticsearch">下载地址&#x2F;文档</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
-
-
-
-<blockquote>
-<p>从Elasticsearch 8.0开始，默认启用安全性。启用安全保护后，弹性堆栈安全功能要求对传输网络层进行TLS加密，否则您的群集将无法启动。</p>
-</blockquote>
-<ol>
-<li><p>为Elasticsearch和Kibana创建一个新的docker网络</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker network create elastic</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>在Docker中启动Elasticsearch。为生成一个密码弹性的用户和终端的输出，以及用于注册Kibana的注册令牌。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -d --name es01 --net elastic -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.0.0</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>复制生成的密码和注册令牌，并将其保存在安全位置。这些值仅在首次启动Elasticsearch时显示。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-&gt; Elasticsearch security features have been automatically configured!</span><br><span class="line">-&gt; Authentication is enabled and cluster connections are encrypted.</span><br><span class="line"></span><br><span class="line"># 账号：elastic；初始密码：+x96YH3NDGmxG-aQ4M8P；重置密码命令：bin/elasticsearch-reset-password -u elastic</span><br><span class="line">-&gt;  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):</span><br><span class="line">  +x96YH3NDGmxG-aQ4M8P</span><br><span class="line"></span><br><span class="line"># ca证书密钥：41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line">-&gt;  HTTP CA certificate SHA-256 fingerprint:</span><br><span class="line">  41696e2dd0dca56e7b74b06bf5b2e002b77bce150d68915a0dbb936124530f79</span><br><span class="line"></span><br><span class="line"># kibana初始化注册密钥：</span><br><span class="line">eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line">-&gt;  Configure Kibana to use this cluster:</span><br><span class="line">* Run Kibana and click the configuration link in the terminal when Kibana starts.</span><br><span class="line">* Copy the following enrollment token and paste it into Kibana in your browser (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlJJN3pEWUFCYVlPRkpUUmxpNkhSOk9yWkJqc0gxU2txRmRmVmVrMFdYd1EifQ==</span><br><span class="line"></span><br><span class="line">-&gt; Configure other nodes to join this cluster:</span><br><span class="line">* Copy the following enrollment token and start new Elasticsearch nodes with `bin/elasticsearch --enrollment-token &lt;token&gt;` (valid for the next 30 minutes):</span><br><span class="line">  eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IlFvN3pEWUFCYVlPRkpUUmxpNkhMOlMzYzVYdWExUkkyWFUtdFZ4U0tENlEifQ==</span><br><span class="line"></span><br><span class="line">  If you&#x27;re running in Docker, copy the enrollment token and run:</span><br><span class="line">  `docker run -e &quot;ENROLLMENT_TOKEN=&lt;token&gt;&quot; docker.elastic.co/elasticsearch/elasticsearch:8.1.2`</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol>
-<li><p>如果您需要重置的密码<code>弹性的</code>用户或其他内置用户，运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-password.html"><code>弹性搜索-重置-密码</code></a>工具。该工具在弹性搜索中可用<code>/bin</code>Docker容器的目录。例如</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</span><br><span class="line"># Password for the [elastic] user successfully reset.</span><br><span class="line"># New value: 4GlsHFPF1kbh8_i4*A3I</span><br></pre></td></tr></table></figure></li>
-</ol>
-</li>
-<li><p>复制<code>http_ca.crt</code>从Docker容器到本地机器的安全证书。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>打开一个新的终端，使用<code>http_ca.crt</code>从Docker容器中复制的文件。输入的密码<code>弹性的</code>出现提示时的用户。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl --cacert http_ca.crt -u elastic https://localhost:9200</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p><strong>生成注册令牌</strong></p>
-<p>注册令牌的有效期为30分钟。如果需要生成新的注册令牌，请运行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/create-enrollment-token.html"><code>弹性搜索-创建-注册-令牌</code></a>现有节点上的工具。该工具在弹性搜索中可用<code>容器</code>docker容器的目录。</p>
-<p>例如，在现有的上运行以下命令<code>es01</code>为新的弹性搜索节点生成注册令牌的节点:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node</span><br><span class="line"></span><br><span class="line"># eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklfQzhEb0FCWmlRQnRCNGFiLVRuOnlwMzZET0Y0VHAtNzd1SC1yMUYzbGcifQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>在启动第一个节点的终端中，复制generatedenrollment令牌以添加新的Elasticsearch节点。在您的新节点上，启动Elasticsearch并包含生成的注册令牌。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -e ENROLLMENT_TOKEN=&quot;&lt;token&gt;&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"></span><br><span class="line"># docker run -e ENROLLMENT_TOKEN=&quot;eyJ2ZXIiOiI4LjEuMiIsImFkciI6WyIxNzIuMTguMC4yOjkyMDAiXSwiZmdyIjoiNDE2OTZlMmRkMGRjYTU2ZTdiNzRiMDZiZjViMmUwMDJiNzdiY2UxNTBkNjg5MTVhMGRiYjkzNjEyNDUzMGY3OSIsImtleSI6IklmQUpEb0FCWmlRQnRCNGFKdVQ2OlUwODhtejV2U0EtaWowaGlHRVRkOGcifQ==&quot; --name es02 --net elastic -it docker.elastic.co/elasticsearch/elasticsearch:8.1.2</span><br><span class="line"># 如果失败可能是内存溢出</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h4><p><a href="https://www.cnblogs.com/linjiqin/p/12103645.html">https://www.cnblogs.com/linjiqin/p/12103645.html</a></p>
-<h4 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker pull kibana:8.0.0</span><br></pre></td></tr></table></figure>
-
-<p>文档地址</p>
-<p><a href="https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450">https://blog.csdn.net/UbuntuTouch/article/details/122936411?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164959816216781683947810%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=164959816216781683947810&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-10-122936411.nonecase&amp;utm_term=%E5%AE%89%E8%A3%85&amp;spm=1018.2226.3001.4450</a></p>
-<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p>vi&#x2F;vim：容器内无法使用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it -u 0 容器名称/id /bin/bash</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install vim*</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>apt-get 在容器内会提示一个路径错误。是因为权限不足。在进入容器时声明权限<code>-u 0</code>使用root权限进入。</p>
-<p><em>apt-get</em>，是一条linux命令，适用于deb包管理式的操作系统，主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。</p>
-<p>此处可以理解centos 使用 yum 安装软件。Ubuntu 使用 apt-get。但是Linux环境下的docker是使用apt-get。包管理跟操作系统无关。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>deploy</category>
-      </categories>
-      <tags>
-        <tag>dotnet</tag>
-        <tag>elk</tag>
-        <tag>elasticsearch</tag>
-        <tag>elastic</tag>
-        <tag>Kibana</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>centos一键安装jenkins</title>
-    <url>/2022/07/15/install_jenkins/</url>
-    <content><![CDATA[<h2 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">前提：服务器docker已经运行，当前服务器是centos</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">echo &quot;开始拉取镜像&quot;</span><br><span class="line">docker pull jenkins/jenkins:lts</span><br><span class="line">echo &quot;拉取镜像完毕&quot;</span><br><span class="line"></span><br><span class="line">echo &quot;创建本地文件夹&quot;</span><br><span class="line">if [ ! -d &quot;/data/jenkins_home&quot; ];then</span><br><span class="line">  mkdir /data/jenkins_home</span><br><span class="line">  echo &quot;本地文件夹创建完成&quot;</span><br><span class="line">  else</span><br><span class="line">  echo &quot;本地文件夹已存在&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;本地文件夹赋权&quot;</span><br><span class="line">chmod 777 /data/jenkins_home</span><br><span class="line">echo &quot;赋权完成&quot;</span><br><span class="line"></span><br><span class="line">if [[ &quot;$(docker inspect [jenkins] 2&gt; /dev/null | grep &#x27;&quot;Name&quot;: &quot;/[jenkins]&quot;&#x27;)&quot; == &quot;&quot; ]]; then</span><br><span class="line">  echo &quot;已存在名为jenkins的容器&quot;</span><br><span class="line">  echo &quot;准备停止删除&quot;</span><br><span class="line">  docker stop jenkins</span><br><span class="line">  echo &quot;停止成功&quot;</span><br><span class="line">  docker rm jenkins</span><br><span class="line">  echo &quot;删除成功&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">echo &quot;运行jenkins&quot;</span><br><span class="line">docker run -d --name jenkins -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/bin/docker -v /data/jenkins_home:/var/jenkins_home -d jenkins/jenkins:lts</span><br><span class="line">echo &quot;运行完成&quot;</span><br><span class="line"></span><br><span class="line">jenkins_pwd1=&quot;#!/bin/bash&quot; </span><br><span class="line">jenkins_pwd2=&quot;echo &#x27;jenkins 初始密码:&#x27;&quot; </span><br><span class="line">jenkins_pwd3=&quot;cat /var/jenkins_home/secrets/initialAdminPassword&quot;  </span><br><span class="line">jenkins_pwd4=&quot;exit&quot;</span><br><span class="line"></span><br><span class="line">echo $&#123;jenkins_pwd1&#125;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_pwd2&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_pwd3&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_pwd4&#125;&gt;&gt;jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;复制文件&quot;</span><br><span class="line">docker cp  jenkins.sh jenkins:/jenkins.sh</span><br><span class="line">rm -f  jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;进入容器&quot;</span><br><span class="line">docker exec -u 0 -it jenkins /bin/bash /jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;添加用户组&quot;</span><br><span class="line">groupadd docker</span><br><span class="line">echo &quot;添加用户到用户组(root:根据实际场景)&quot;</span><br><span class="line">sudo usermod -a -G docker root</span><br><span class="line">echo &quot;修改文件权限&quot;</span><br><span class="line">cd /var/run</span><br><span class="line">echo &quot;允许读写和执行&quot;</span><br><span class="line">chmod 777 docker.sock</span><br><span class="line">timedatectl set-timezone Asia/Shanghai</span><br><span class="line">echo &quot;修复jenkins时区&quot;</span><br><span class="line"></span><br><span class="line">jenkins_time1=&quot;#!/bin/bash&quot; </span><br><span class="line">jenkins_time2=&quot;echo &#x27;替换时区文件&#x27;&quot; </span><br><span class="line">jenkins_time3=&quot;cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime&quot;  </span><br><span class="line">jenkins_time4=&quot;exit&quot;</span><br><span class="line"></span><br><span class="line">echo $&#123;jenkins_time1&#125;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_time2&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_time3&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_time4&#125;&gt;&gt;jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;复制文件&quot;</span><br><span class="line">docker cp  jenkins.sh jenkins:/jenkins.sh</span><br><span class="line">rm -f  jenkins.sh</span><br><span class="line">echo &quot;进入容器&quot;</span><br><span class="line">docker exec -u 0 -it jenkins /bin/bash /jenkins.sh</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">echo &quot;安装完毕&quot;</span><br><span class="line">echo &quot;请执行下面站点操作！对时间没有强制要求可以不执行&quot;</span><br><span class="line">echo &quot;站点操作：&quot;</span><br><span class="line">echo &quot;[站点地址]/restart&quot;</span><br><span class="line">echo &quot;jenkins上[系统管理》脚本命令行]运行:&quot;</span><br><span class="line">echo &quot;System.setProperty(&#x27;org.apache.commons.jelly.tags.fmt.timeZone&#x27;, &#x27;Asia/Shanghai&#x27;)&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>jenkins</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>jenkins</tag>
-        <tag>shell</tag>
-        <tag>脚本</tag>
-        <tag>sh</tag>
-        <tag>deploy</tag>
-        <tag>jenkis</tag>
       </tags>
   </entry>
   <entry>
@@ -751,61 +770,30 @@
         <category>jenkins</category>
       </categories>
       <tags>
-        <tag>jenkis</tag>
         <tag>CI/CD</tag>
         <tag>docker构建jenkins</tag>
         <tag>jenkis部署.netcore</tag>
         <tag>jenkis部署uniapp</tag>
         <tag>uniapp自动推送微信</tag>
+        <tag>jenkis</tag>
       </tags>
   </entry>
   <entry>
-    <title>docker-pack</title>
-    <url>/2022/07/24/docker-pack/</url>
-    <content><![CDATA[<h3 id="docker打包"><a href="#docker打包" class="headerlink" title="docker打包"></a>docker打包</h3><p>将容器打包到镜像</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker commit [-m=<span class="string">&quot;提交的描述信息&quot;</span>] [-a=<span class="string">&quot;创建者&quot;</span>] 容器名称|容器ID 生成的镜像名[:标签名]</span></span><br><span class="line">docker commit -m=&quot;use nginx deploy my-hexo-blog&quot; -a=&quot;wuxinheng&quot; hexo-blog wxh-hexo:1.0</span><br></pre></td></tr></table></figure>
+    <title>centos一键安装jenkins</title>
+    <url>/2022/07/15/install_jenkins/</url>
+    <content><![CDATA[<h2 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">前提：服务器docker已经运行，当前服务器是centos</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">echo &quot;开始拉取镜像&quot;</span><br><span class="line">docker pull jenkins/jenkins:lts</span><br><span class="line">echo &quot;拉取镜像完毕&quot;</span><br><span class="line"></span><br><span class="line">echo &quot;创建本地文件夹&quot;</span><br><span class="line">if [ ! -d &quot;/data/jenkins_home&quot; ];then</span><br><span class="line">  mkdir /data/jenkins_home</span><br><span class="line">  echo &quot;本地文件夹创建完成&quot;</span><br><span class="line">  else</span><br><span class="line">  echo &quot;本地文件夹已存在&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;本地文件夹赋权&quot;</span><br><span class="line">chmod 777 /data/jenkins_home</span><br><span class="line">echo &quot;赋权完成&quot;</span><br><span class="line"></span><br><span class="line">if [[ &quot;$(docker inspect [jenkins] 2&gt; /dev/null | grep &#x27;&quot;Name&quot;: &quot;/[jenkins]&quot;&#x27;)&quot; == &quot;&quot; ]]; then</span><br><span class="line">  echo &quot;已存在名为jenkins的容器&quot;</span><br><span class="line">  echo &quot;准备停止删除&quot;</span><br><span class="line">  docker stop jenkins</span><br><span class="line">  echo &quot;停止成功&quot;</span><br><span class="line">  docker rm jenkins</span><br><span class="line">  echo &quot;删除成功&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">echo &quot;运行jenkins&quot;</span><br><span class="line">docker run -d --name jenkins -p 8081:8080 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/bin/docker -v /data/jenkins_home:/var/jenkins_home -d jenkins/jenkins:lts</span><br><span class="line">echo &quot;运行完成&quot;</span><br><span class="line"></span><br><span class="line">jenkins_pwd1=&quot;#!/bin/bash&quot; </span><br><span class="line">jenkins_pwd2=&quot;echo &#x27;jenkins 初始密码:&#x27;&quot; </span><br><span class="line">jenkins_pwd3=&quot;cat /var/jenkins_home/secrets/initialAdminPassword&quot;  </span><br><span class="line">jenkins_pwd4=&quot;exit&quot;</span><br><span class="line"></span><br><span class="line">echo $&#123;jenkins_pwd1&#125;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_pwd2&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_pwd3&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_pwd4&#125;&gt;&gt;jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;复制文件&quot;</span><br><span class="line">docker cp  jenkins.sh jenkins:/jenkins.sh</span><br><span class="line">rm -f  jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;进入容器&quot;</span><br><span class="line">docker exec -u 0 -it jenkins /bin/bash /jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;添加用户组&quot;</span><br><span class="line">groupadd docker</span><br><span class="line">echo &quot;添加用户到用户组(root:根据实际场景)&quot;</span><br><span class="line">sudo usermod -a -G docker root</span><br><span class="line">echo &quot;修改文件权限&quot;</span><br><span class="line">cd /var/run</span><br><span class="line">echo &quot;允许读写和执行&quot;</span><br><span class="line">chmod 777 docker.sock</span><br><span class="line">timedatectl set-timezone Asia/Shanghai</span><br><span class="line">echo &quot;修复jenkins时区&quot;</span><br><span class="line"></span><br><span class="line">jenkins_time1=&quot;#!/bin/bash&quot; </span><br><span class="line">jenkins_time2=&quot;echo &#x27;替换时区文件&#x27;&quot; </span><br><span class="line">jenkins_time3=&quot;cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime&quot;  </span><br><span class="line">jenkins_time4=&quot;exit&quot;</span><br><span class="line"></span><br><span class="line">echo $&#123;jenkins_time1&#125;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_time2&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_time3&#125;&gt;&gt;jenkins.sh</span><br><span class="line">echo $&#123;jenkins_time4&#125;&gt;&gt;jenkins.sh</span><br><span class="line"></span><br><span class="line">echo &quot;复制文件&quot;</span><br><span class="line">docker cp  jenkins.sh jenkins:/jenkins.sh</span><br><span class="line">rm -f  jenkins.sh</span><br><span class="line">echo &quot;进入容器&quot;</span><br><span class="line">docker exec -u 0 -it jenkins /bin/bash /jenkins.sh</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">echo &quot;安装完毕&quot;</span><br><span class="line">echo &quot;请执行下面站点操作！对时间没有强制要求可以不执行&quot;</span><br><span class="line">echo &quot;站点操作：&quot;</span><br><span class="line">echo &quot;[站点地址]/restart&quot;</span><br><span class="line">echo &quot;jenkins上[系统管理》脚本命令行]运行:&quot;</span><br><span class="line">echo &quot;System.setProperty(&#x27;org.apache.commons.jelly.tags.fmt.timeZone&#x27;, &#x27;Asia/Shanghai&#x27;)&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>保存镜像到本地</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker save -o 保存的PathName 镜像名:标签</span></span><br><span class="line">docker save -o /wxh-hexo.tar wxh-hexo:1.0</span><br></pre></td></tr></table></figure>
-
-<p>加载镜像文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker load -i 镜像备份文件</span></span><br><span class="line">docker load -i /wxh-hexo.tar</span><br></pre></td></tr></table></figure>
-
-<p>docker登录</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">用户名就真是是用户名，不是邮箱</span></span><br><span class="line">docker login</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">docker images ls</span><br></pre></td></tr></table></figure>
-
-<p>提交到镜像仓库</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改标签，会创建一个新的镜像</span></span><br><span class="line">docker tag wxh-hexo:1.0  wuxinheng/wxh-hexo</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">提交镜像，网络不好可能会出现408,多请求就好了，需要把镜像提交到 [用户名]/images</span></span><br><span class="line">docker push wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
-
-<p>拉取镜像</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">网络不好可能会出现408,多请求就好了</span></span><br><span class="line">docker pull wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
-
-<p>运行镜像</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">docker run -d --name hexo -p <span class="number">4000</span>:<span class="number">80</span> wuxinheng/wxh-hexo:latest</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://blog.csdn.net/Florine113/article/details/121748462">Docker发布镜像时报错denied: requested access to the resource is denied解决办法_刺客765的博客-CSDN博客</a></p>
-<p><a href="https://blog.csdn.net/quanqxj/article/details/79479943">解决Error response from daemon: Get https://registry-1.docker.io/v2/library/hello-world/manifests/问题_权权qxj的博客-CSDN博客</a></p>
-<p><a href="https://blog.csdn.net/xinaml/article/details/77573644">Docker 容器创建镜像并提交到Docker hub_xinaml的博客-CSDN博客_docker 镜像提交</a></p>
 ]]></content>
       <categories>
-        <category>docker</category>
+        <category>jenkins</category>
       </categories>
       <tags>
-        <tag>docker-pack</tag>
-        <tag>镜像制作</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>linux 虚拟机没有ens33网卡信息</title>
-    <url>/2022/07/19/linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%B2%A1%E6%9C%89ens33%E7%BD%91%E5%8D%A1%E4%BF%A1%E6%81%AF/</url>
-    <content><![CDATA[<p>使用ifconfig遇到没有ens33网络信息</p>
-<p>电脑上VMware 创建了三台虚拟机。其中一台无法连接网络我更改了网络连接设置为NAT模式，然后重启还是不行。<br>参照网友@<a href="https://blog.csdn.net/weixin_53685939/article/details/119732919">白天不懂夜的美♂</a></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl stop NetworkManager</span><br><span class="line">systemctl restart network.service</span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure>
-
-<p>成功恢复！</p>
-]]></content>
-      <tags>
-        <tag>虚拟机网络</tag>
+        <tag>deploy</tag>
+        <tag>docker</tag>
+        <tag>jenkins</tag>
+        <tag>shell</tag>
+        <tag>脚本</tag>
+        <tag>sh</tag>
       </tags>
   </entry>
   <entry>
@@ -846,10 +834,27 @@
         <category>微服务</category>
       </categories>
       <tags>
+        <tag>dotnet</tag>
         <tag>consul</tag>
         <tag>ocelot</tag>
         <tag>nginx</tag>
         <tag>微服务</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux 虚拟机没有ens33网卡信息</title>
+    <url>/2022/07/19/linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%B2%A1%E6%9C%89ens33%E7%BD%91%E5%8D%A1%E4%BF%A1%E6%81%AF/</url>
+    <content><![CDATA[<p>使用ifconfig遇到没有ens33网络信息</p>
+<p>电脑上VMware 创建了三台虚拟机。其中一台无法连接网络我更改了网络连接设置为NAT模式，然后重启还是不行。<br>参照网友@<a href="https://blog.csdn.net/weixin_53685939/article/details/119732919">白天不懂夜的美♂</a></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl stop NetworkManager</span><br><span class="line">systemctl restart network.service</span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure>
+
+<p>成功恢复！</p>
+]]></content>
+      <categories>
+        <category>虚拟机</category>
+      </categories>
+      <tags>
+        <tag>虚拟机网络</tag>
       </tags>
   </entry>
   <entry>
@@ -864,51 +869,12 @@
 <h4 id="版本升级"><a href="#版本升级" class="headerlink" title="版本升级"></a>版本升级</h4><p>与普通安装相似，需要先暂停原有的mysql容器，记得先备份。然后拉取新版本mysql,运行修改密码。然后重启。原来旧版本的mysql镜像可以删除。</p>
 ]]></content>
       <categories>
-        <category>deploy</category>
+        <category>docker</category>
       </categories>
       <tags>
+        <tag>deploy</tag>
         <tag>mysql</tag>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在docker中部署wtm</title>
-    <url>/2022/07/15/wtm/</url>
-    <content><![CDATA[<h4 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull mcr.microsoft.com/dotnet/sdk:5.0</span><br></pre></td></tr></table></figure>
-
-<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入</span></span><br><span class="line">docker images</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">结果</span></span><br><span class="line">mcr.microsoft.com/dotnet/sdk     5.0</span><br><span class="line">mcr.microsoft.com/dotnet/aspnet  5.0</span><br></pre></td></tr></table></figure>
-
-<h4 id="创建doccker配置文件"><a href="#创建doccker配置文件" class="headerlink" title="创建doccker配置文件"></a>创建doccker配置文件</h4><p><code>Visual Studio</code>右键项目创建<code>Docker</code>支持</p>
-<h4 id="打包项目镜像"><a href="#打包项目镜像" class="headerlink" title="打包项目镜像"></a>打包项目镜像</h4><ul>
-<li><p>使用Dockerfile打包镜像</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">当前文件夹打包镜像</span></span><br><span class="line">docker build -t 镜像名称 .</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">当前文件夹使用指定文件打包镜像</span></span><br><span class="line">docker build -f xxx/Dockerfile -t 镜像名称 .</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="构建容器"><a href="#构建容器" class="headerlink" title="构建容器"></a>构建容器</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --name 容器名称 -p 2022:80 --restart=always 镜像名称</span><br></pre></td></tr></table></figure>
-
-<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><h5 id="System-Drawing-兼容问题"><a href="#System-Drawing-兼容问题" class="headerlink" title="System.Drawing 兼容问题"></a>System.Drawing 兼容问题</h5><h6 id="验证码不显示"><a href="#验证码不显示" class="headerlink" title="验证码不显示"></a>验证码不显示</h6><p>修改Dockerfile</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">更新包</span></span><br><span class="line">RUN apt-get update</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装apt-get 安装 libc6-dev , libgdiplus  用于支持system.drawing 组件绘制,默认ubuntu命令</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">RUN apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配置apt的资源，采用阿里云资源仓库 必须是debian 10 buster版本</span></span><br><span class="line">RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot; &gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian-security buster/updates main&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian-security buster/updates main&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list</span><br><span class="line">RUN  apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span><br></pre></td></tr></table></figure>
-
-<h5 id="Dockerfiled修改"><a href="#Dockerfiled修改" class="headerlink" title="Dockerfiled修改"></a>Dockerfiled修改</h5><blockquote>
-<p>当前项目后期我们进行的大范围改动，包括项目文件夹的移动、使用封装之后通用类库的Nuget包。</p>
-<p>过程中发我使用jenkins发现。无法使用原有dockerfile进行安装。我对dockerfile进行了修改。</p>
-</blockquote>
-<h6 id="文件路径修改"><a href="#文件路径修改" class="headerlink" title="文件路径修改"></a>文件路径修改</h6><p>见下面</p>
-<h6 id="指定Nuget-包源"><a href="#指定Nuget-包源" class="headerlink" title="指定Nuget 包源"></a>指定Nuget 包源</h6><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 指定项目基于什么框架</span></span><br><span class="line"><span class="keyword">FROM</span> mcr.microsoft.com/dotnet/aspnet:<span class="number">5.0</span> AS base</span><br><span class="line"><span class="comment"># 更新apt-ger</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update</span></span><br><span class="line"><span class="comment"># 设置包源</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mv</span> /etc/apt/sources.list /etc/apt/sources.list.bak &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot;</span> &gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian-security buster/updates main&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian-security buster/updates main&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list</span></span><br><span class="line"><span class="comment"># 安装库，此处是支持gdip</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash">  apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span></span><br><span class="line"><span class="comment"># 进入指定目录</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="comment"># 指定端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"><span class="comment"># 指定基于5.0生成</span></span><br><span class="line"><span class="keyword">FROM</span> mcr.microsoft.com/dotnet/sdk:<span class="number">5.0</span> AS build</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /src</span></span><br><span class="line"><span class="comment"># 此处复制相关项目的依赖，如果项目后期改动，会导致后期打包失败，项目目录根据实际情况来</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Property/ShuWen.Property/ShuWen.Property.csproj&quot;</span>, <span class="string">&quot;Property/ShuWen.Property/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Property/ShuWen.Property/nuget.config&quot;</span>, <span class="string">&quot;Property/ShuWen.Property/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;src/WalkingTec.Mvvm.TagHelpers.LayUI/WalkingTec.Mvvm.TagHelpers.LayUI.csproj&quot;</span>, <span class="string">&quot;src/WalkingTec.Mvvm.TagHelpers.LayUI/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;src/WalkingTec.Mvvm.Core/WalkingTec.Mvvm.Core.csproj&quot;</span>, <span class="string">&quot;src/WalkingTec.Mvvm.Core/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;src/WalkingTec.Mvvm.Mvc/WalkingTec.Mvvm.Mvc.csproj&quot;</span>, <span class="string">&quot;src/WalkingTec.Mvvm.Mvc/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Common/ShuWen.Common.csproj&quot;</span>, <span class="string">&quot;Common/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;ShuWen.Property.DataAccess/ShuWen.Property.DataAccess.csproj&quot;</span>, <span class="string">&quot;ShuWen.Property.DataAccess/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;ShuWen.Property.Model/ShuWen.Property.Model.csproj&quot;</span>, <span class="string">&quot;ShuWen.Property.Model/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Property/ShuWen.Property.ViewModel/ShuWen.Property.ViewModel.csproj&quot;</span>, <span class="string">&quot;Property/ShuWen.Property.ViewModel/&quot;</span>]</span></span><br><span class="line"><span class="comment"># 此步跟启动vs项目前的生成或者第一次打开项目生成项目很像nuget包还原。实际也做得是nuget包还原。此处需要指定包源。我的包源写在nuget.config中</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> dotnet restore <span class="string">&quot;Property/ShuWen.Property/ShuWen.Property.csproj&quot;</span>  --configfile <span class="string">&quot;Property/ShuWen.Property/nuget.config&quot;</span></span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> <span class="string">&quot;Property/ShuWen.Property/&quot;</span></span></span><br><span class="line"><span class="comment"># 对项目进行打包</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> dotnet build <span class="string">&quot;ShuWen.Property.csproj&quot;</span> -c Release -o /app/build</span></span><br><span class="line"><span class="keyword">FROM</span> build AS publish</span><br><span class="line"><span class="comment"># 发布项目</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> dotnet publish <span class="string">&quot;ShuWen.Property.csproj&quot;</span> -c Release -o /app/publish</span></span><br><span class="line"><span class="keyword">FROM</span> base AS final</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="comment"># 将项目复制到指定的文件夹</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=publish /app/publish .</span></span><br><span class="line"><span class="comment"># 运行项目</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;dotnet&quot;</span>, <span class="string">&quot;ShuWen.Property.dll&quot;</span>]</span></span><br></pre></td></tr></table></figure>
-
-<p>nuget.config 内容：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">packageSources</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">add</span> <span class="attr">key</span>=<span class="string">&quot;Nuget.org&quot;</span> <span class="attr">value</span>=<span class="string">&quot;https://api.nuget.org/v3/index.json&quot;</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">add</span> <span class="attr">key</span>=<span class="string">&quot;Baget&quot;</span> <span class="attr">value</span>=<span class="string">&quot;http://47.100.94.46:5555/v3/index.json&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">packageSources</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>deploy</category>
-      </categories>
-      <tags>
-        <tag>dotnet</tag>
-        <tag>docker部署wtm</tag>
-        <tag>wtm</tag>
-        <tag>linux验证码</tag>
-        <tag>gdip</tag>
-        <tag>System.Drawing 兼容问题</tag>
       </tags>
   </entry>
   <entry>
@@ -962,13 +928,97 @@
 <h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>19年使用wcf+nginx初探。</p>
 <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">#我是使用时是成功代理的，以下代码仅供参考</span></span><br><span class="line"><span class="comment">#负载均衡是在内网下完成的，在外网请求的是代理服务器地址监听的是9000端口，再由代理服务器向后端服务器发送请求</span></span><br><span class="line"><span class="comment">#均衡负载，测试工具：apache-jmeter-5.2.1 </span></span><br><span class="line"></span><br><span class="line">upstream GQWcf  &#123;                                <span class="comment">#代理名称，下面是两台轮询地址如果与一台服务器宕机另外一台还可以提供服务</span></span><br><span class="line"></span><br><span class="line">         <span class="comment">#ip_hash;                               #如果用户已经访问了某台服务器，当用户再次访问时将该请求通过哈希算法自动定位到该台服务器</span></span><br><span class="line">                                                 <span class="comment">#这样访客固定访问一台后端服务器可以解决session问题避免会话丢失但是可能会造成分配不均。</span></span><br><span class="line">                                                 <span class="comment">#url  hash跟ip_hash类似根据url的hash值进行分配，将URL分配到同一个否端服务器，</span></span><br><span class="line">                                                 <span class="comment">#当服务器存在缓存时比较有效</span></span><br><span class="line">         server 192.168.1.180:8000  <span class="attr">weight</span>=<span class="number">10</span><span class="comment">;   #代理地址，在服务器上确保端口开放   weight:权重与访问率成正比，权重越大访问率越大</span></span><br><span class="line">         server 192.168.1.252:8000  <span class="attr">weight</span>=<span class="number">70</span><span class="comment">;   #代理地址也就是wcf的地址  </span></span><br><span class="line">         <span class="comment">#fair；                                 #(第三方插件)：根据服务器响应时间进行分配，响应快的优先分配</span></span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line">server &#123;</span><br><span class="line"> </span><br><span class="line">        listen       9000  default_server<span class="comment">;       #监听默认服务器9000端口</span></span><br><span class="line">        server_name  127.0.0.1<span class="comment">;                  #默认本机</span></span><br><span class="line"> </span><br><span class="line">        location / &#123;</span><br><span class="line">                   proxy_pass  http://GQWcf$request_uri<span class="comment">;      #$request_uri有没有不影响，GQWcf：代理名称</span></span><br><span class="line">                   proxy_redirect off<span class="comment">;</span></span><br><span class="line">                   proxy_set_header Host $host:$server_port<span class="comment">;  #:$server_port非常重要不然会出代理成功后无法再转向真实ip的下一级</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page   500 502 503 504  /50x.html<span class="comment">;              #发生错误显示预定义的URL,&quot;/50x.html&quot;指下面的地址</span></span><br><span class="line"></span><br><span class="line">        <span class="attr">location</span> = /<span class="number">50</span>x.html &#123;</span><br><span class="line">            root   html<span class="comment">;                                      #发生错误返回的地址</span></span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>nginx</category>
+        <category>docker</category>
       </categories>
       <tags>
-        <tag>docker</tag>
+        <tag>nginx</tag>
         <tag>nginx代理</tag>
         <tag>nginx负载均衡</tag>
         <tag>nginx配置ssl</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在docker中部署wtm</title>
+    <url>/2022/07/15/wtm/</url>
+    <content><![CDATA[<h4 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull mcr.microsoft.com/dotnet/sdk:5.0</span><br></pre></td></tr></table></figure>
+
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入</span></span><br><span class="line">docker images</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">结果</span></span><br><span class="line">mcr.microsoft.com/dotnet/sdk     5.0</span><br><span class="line">mcr.microsoft.com/dotnet/aspnet  5.0</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建doccker配置文件"><a href="#创建doccker配置文件" class="headerlink" title="创建doccker配置文件"></a>创建doccker配置文件</h4><p><code>Visual Studio</code>右键项目创建<code>Docker</code>支持</p>
+<h4 id="打包项目镜像"><a href="#打包项目镜像" class="headerlink" title="打包项目镜像"></a>打包项目镜像</h4><ul>
+<li><p>使用Dockerfile打包镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">当前文件夹打包镜像</span></span><br><span class="line">docker build -t 镜像名称 .</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">当前文件夹使用指定文件打包镜像</span></span><br><span class="line">docker build -f xxx/Dockerfile -t 镜像名称 .</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="构建容器"><a href="#构建容器" class="headerlink" title="构建容器"></a>构建容器</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --name 容器名称 -p 2022:80 --restart=always 镜像名称</span><br></pre></td></tr></table></figure>
+
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><h5 id="System-Drawing-兼容问题"><a href="#System-Drawing-兼容问题" class="headerlink" title="System.Drawing 兼容问题"></a>System.Drawing 兼容问题</h5><h6 id="验证码不显示"><a href="#验证码不显示" class="headerlink" title="验证码不显示"></a>验证码不显示</h6><p>修改Dockerfile</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">更新包</span></span><br><span class="line">RUN apt-get update</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装apt-get 安装 libc6-dev , libgdiplus  用于支持system.drawing 组件绘制,默认ubuntu命令</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">RUN apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配置apt的资源，采用阿里云资源仓库 必须是debian 10 buster版本</span></span><br><span class="line">RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot; &gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian-security buster/updates main&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian-security buster/updates main&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span><br><span class="line">   echo &quot;deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot; &gt;&gt;/etc/apt/sources.list</span><br><span class="line">RUN  apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span><br></pre></td></tr></table></figure>
+
+<h5 id="Dockerfiled修改"><a href="#Dockerfiled修改" class="headerlink" title="Dockerfiled修改"></a>Dockerfiled修改</h5><blockquote>
+<p>当前项目后期我们进行的大范围改动，包括项目文件夹的移动、使用封装之后通用类库的Nuget包。</p>
+<p>过程中发我使用jenkins发现。无法使用原有dockerfile进行安装。我对dockerfile进行了修改。</p>
+</blockquote>
+<h6 id="文件路径修改"><a href="#文件路径修改" class="headerlink" title="文件路径修改"></a>文件路径修改</h6><p>见下面</p>
+<h6 id="指定Nuget-包源"><a href="#指定Nuget-包源" class="headerlink" title="指定Nuget 包源"></a>指定Nuget 包源</h6><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 指定项目基于什么框架</span></span><br><span class="line"><span class="keyword">FROM</span> mcr.microsoft.com/dotnet/aspnet:<span class="number">5.0</span> AS base</span><br><span class="line"><span class="comment"># 更新apt-ger</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update</span></span><br><span class="line"><span class="comment"># 设置包源</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mv</span> /etc/apt/sources.list /etc/apt/sources.list.bak &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot;</span> &gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian-security buster/updates main&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian-security buster/updates main&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">   <span class="built_in">echo</span> <span class="string">&quot;deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib&quot;</span> &gt;&gt;/etc/apt/sources.list</span></span><br><span class="line"><span class="comment"># 安装库，此处是支持gdip</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash">  apt-get update &amp;&amp; apt-get install -y apt-utils libgdiplus libc6-dev</span></span><br><span class="line"><span class="comment"># 进入指定目录</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="comment"># 指定端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"><span class="comment"># 指定基于5.0生成</span></span><br><span class="line"><span class="keyword">FROM</span> mcr.microsoft.com/dotnet/sdk:<span class="number">5.0</span> AS build</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /src</span></span><br><span class="line"><span class="comment"># 此处复制相关项目的依赖，如果项目后期改动，会导致后期打包失败，项目目录根据实际情况来</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Property/ShuWen.Property/ShuWen.Property.csproj&quot;</span>, <span class="string">&quot;Property/ShuWen.Property/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Property/ShuWen.Property/nuget.config&quot;</span>, <span class="string">&quot;Property/ShuWen.Property/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;src/WalkingTec.Mvvm.TagHelpers.LayUI/WalkingTec.Mvvm.TagHelpers.LayUI.csproj&quot;</span>, <span class="string">&quot;src/WalkingTec.Mvvm.TagHelpers.LayUI/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;src/WalkingTec.Mvvm.Core/WalkingTec.Mvvm.Core.csproj&quot;</span>, <span class="string">&quot;src/WalkingTec.Mvvm.Core/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;src/WalkingTec.Mvvm.Mvc/WalkingTec.Mvvm.Mvc.csproj&quot;</span>, <span class="string">&quot;src/WalkingTec.Mvvm.Mvc/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Common/ShuWen.Common.csproj&quot;</span>, <span class="string">&quot;Common/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;ShuWen.Property.DataAccess/ShuWen.Property.DataAccess.csproj&quot;</span>, <span class="string">&quot;ShuWen.Property.DataAccess/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;ShuWen.Property.Model/ShuWen.Property.Model.csproj&quot;</span>, <span class="string">&quot;ShuWen.Property.Model/&quot;</span>]</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> [<span class="string">&quot;Property/ShuWen.Property.ViewModel/ShuWen.Property.ViewModel.csproj&quot;</span>, <span class="string">&quot;Property/ShuWen.Property.ViewModel/&quot;</span>]</span></span><br><span class="line"><span class="comment"># 此步跟启动vs项目前的生成或者第一次打开项目生成项目很像nuget包还原。实际也做得是nuget包还原。此处需要指定包源。我的包源写在nuget.config中</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> dotnet restore <span class="string">&quot;Property/ShuWen.Property/ShuWen.Property.csproj&quot;</span>  --configfile <span class="string">&quot;Property/ShuWen.Property/nuget.config&quot;</span></span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> <span class="string">&quot;Property/ShuWen.Property/&quot;</span></span></span><br><span class="line"><span class="comment"># 对项目进行打包</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> dotnet build <span class="string">&quot;ShuWen.Property.csproj&quot;</span> -c Release -o /app/build</span></span><br><span class="line"><span class="keyword">FROM</span> build AS publish</span><br><span class="line"><span class="comment"># 发布项目</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> dotnet publish <span class="string">&quot;ShuWen.Property.csproj&quot;</span> -c Release -o /app/publish</span></span><br><span class="line"><span class="keyword">FROM</span> base AS final</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="comment"># 将项目复制到指定的文件夹</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=publish /app/publish .</span></span><br><span class="line"><span class="comment"># 运行项目</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;dotnet&quot;</span>, <span class="string">&quot;ShuWen.Property.dll&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<p>nuget.config 内容：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">packageSources</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">add</span> <span class="attr">key</span>=<span class="string">&quot;Nuget.org&quot;</span> <span class="attr">value</span>=<span class="string">&quot;https://api.nuget.org/v3/index.json&quot;</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">add</span> <span class="attr">key</span>=<span class="string">&quot;Baget&quot;</span> <span class="attr">value</span>=<span class="string">&quot;http://47.100.94.46:5555/v3/index.json&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">packageSources</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>dotnet</category>
+      </categories>
+      <tags>
+        <tag>deploy</tag>
+        <tag>docker</tag>
+        <tag>dotnet</tag>
+        <tag>wtm</tag>
+        <tag>linux验证码</tag>
+        <tag>gdip</tag>
+        <tag>System.Drawing 兼容问题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>wtm多租户实现_增删改</title>
+    <url>/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E5%A2%9E%E5%88%A0%E6%94%B9/</url>
+    <content><![CDATA[<p>wtm源码解读_3.md 中数据补充有些其他问题。就是写代码的人不遵守wtm的原则来写可能会逃避掉数据补充方法。<br>我们这里处理的方式可能粗暴点，直接重写datacontext中SaveChanges()</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="built_in">int</span> <span class="title">SaveChanges</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 多端数据过滤判断</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode != <span class="string">&quot;0&quot;</span>)</span><br><span class="line">        UpdateTenantCode();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">base</span>.SaveChanges();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;<span class="built_in">int</span>&gt; <span class="title">SaveChangesAsync</span>(<span class="params">CancellationToken cancellationToken = <span class="literal">default</span>(CancellationToken</span>))</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//多端数据过滤判断</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode != <span class="string">&quot;0&quot;</span>)</span><br><span class="line">        UpdateTenantCode();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> <span class="keyword">base</span>.SaveChangesAsync(cancellationToken);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">UpdateTenantCode</span>()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有新增、更新、删除的实体</span></span><br><span class="line">    <span class="keyword">var</span> entities = ChangeTracker.Entries().Where(u =&gt; u.State == EntityState.Added || u.State == EntityState.Modified || u.State == EntityState.Deleted);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> entity <span class="keyword">in</span> entities)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entity.Entity.GetType())</span><br><span class="line">            &amp;&amp; <span class="built_in">string</span>.IsNullOrEmpty((entity.Entity <span class="keyword">as</span> IHasTentant).TenantCode))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">switch</span> (entity.State)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 自动设置租户Id</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Added:</span><br><span class="line">                    entity.Property(<span class="keyword">nameof</span>(IHasTentant.TenantCode)).CurrentValue = TenantCode;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 排除租户Id</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Modified:</span><br><span class="line">                    entity.Property(<span class="keyword">nameof</span>(IHasTentant.TenantCode)).IsModified = <span class="literal">false</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 删除处理</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Deleted:</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>dotnet</category>
+      </categories>
+      <tags>
+        <tag>dotnet</tag>
+        <tag>wtm</tag>
+        <tag>efcore</tag>
+        <tag>saas</tag>
+        <tag>多租户</tag>
+        <tag>EF数据过滤</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>wtm多租户实现_查询</title>
+    <url>/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/</url>
+    <content><![CDATA[<p>感谢：<a href="https://github.com/dotnetcore/sharding-core">说都不会话了(sharding-core作者)</a><br>参考：<a href="https://www.cnblogs.com/clis/"><img src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页"></a><a href="https://www.cnblogs.com/clis/p/16501586.html">芦荟柚子茶</a></p>
+<blockquote>
+<p>准确来说是EF的全局过滤器使用</p>
+</blockquote>
+<p>一直以来我是错的。DataContext的OnModelCreating其实是在初始化的时候执行。我还以为我每次调用db都会执行，唉~<br>TenantCode获取请看wtm源码解读1、2</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnModelCreating</span>(<span class="params">ModelBuilder modelBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 基本注册</span></span><br><span class="line">            <span class="comment">//builder.Entity&lt;TestDelete&gt;().HasQueryFilter(e =&gt; !e.IsDeleted);</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 获取model中的类获取程序集，因为model跟datacontext不在一个文件夹下</span></span><br><span class="line">            Assembly assembly = <span class="keyword">typeof</span>(AuditLog).Assembly;</span><br><span class="line">            <span class="comment">// 通过model获取所有的实体类，并进行过滤</span></span><br><span class="line">            List&lt;Type&gt; entityTypes = assembly.GetTypes()</span><br><span class="line">                .Where(t =&gt; t.IsSubclassOf(<span class="keyword">typeof</span>(BasePoco)) &amp;&amp; !t.IsAbstract)</span><br><span class="line">                .ToList();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获取ConfigureFilters方法</span></span><br><span class="line">            MethodInfo? configureFilters = <span class="keyword">typeof</span>(DataContext).GetMethod(</span><br><span class="line">                <span class="keyword">nameof</span>(ConfigureFilters),</span><br><span class="line">                BindingFlags.Instance | BindingFlags.NonPublic</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (configureFilters == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(<span class="keyword">nameof</span>(configureFilters));</span><br><span class="line">            <span class="comment">// 循环注册</span></span><br><span class="line">            <span class="keyword">foreach</span> (<span class="keyword">var</span> entityType <span class="keyword">in</span> entityTypes)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 注册实体</span></span><br><span class="line">                modelBuilder.Entity(entityType);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 注册筛选器</span></span><br><span class="line">                configureFilters</span><br><span class="line">                    .MakeGenericMethod(entityType)</span><br><span class="line">                    .Invoke(<span class="keyword">this</span>, <span class="keyword">new</span> <span class="built_in">object</span>[] &#123; modelBuilder, entityType &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 控制对象的是否忽略过滤，这句应该放在FrameworkContext中或者等级更高的基类中。</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">bool</span> IgnoreDeleteFilter &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拼接表达式对象，进行注册筛选器。</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">ConfigureFilters</span>&lt;<span class="title">TEntity</span>&gt;(<span class="params">ModelBuilder builder, Type entityType</span>)</span></span><br><span class="line"><span class="function">           <span class="keyword">where</span> TEntity : <span class="keyword">class</span></span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 剩下的是表达式树，我跟芦荟柚子茶一样，不太了解不敢乱说</span></span><br><span class="line">            <span class="comment">// 重要的概念是@说都不会话了 跟我说的关键信息：</span></span><br><span class="line">            <span class="comment">// 1.expression是延迟计算的</span></span><br><span class="line">            <span class="comment">// 2.e只要expression用了局部变量</span></span><br><span class="line">            <span class="comment">// 3.每次执行sql的时候局部变量是重新计算的</span></span><br><span class="line">            <span class="comment">// 表达式短路（第一次听别人说。还是得跟大佬多接触，新奇）</span></span><br><span class="line">            <span class="comment">// 在这还是非常感谢@说都不会话了</span></span><br><span class="line">            Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt;? expression = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IPersistPoco).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                expression = e =&gt; IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">bool</span>&gt;(e, <span class="string">&quot;IsValid&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt; tenantExpression = e =&gt;IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">string</span>&gt;(e, <span class="string">&quot;TenantCode&quot;</span>) == TenantCode;</span><br><span class="line">                expression = expression == <span class="literal">null</span> ? tenantExpression : CombineExpressions(expression, tenantExpression);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (expression == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">            builder.Entity&lt;TEntity&gt;().HasQueryFilter(expression);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="title">Expression</span>&lt;<span class="title">Func</span>&lt;<span class="title">T</span>, <span class="title">bool</span>&gt;&gt; <span class="title">CombineExpressions</span>&lt;<span class="title">T</span>&gt;(<span class="params">Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression1, Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression2</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> parameter = Expression.Parameter(<span class="keyword">typeof</span>(T));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> leftVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression1.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> left = leftVisitor.Visit(expression1.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> rightVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression2.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> right = rightVisitor.Visit(expression2.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> Expression.Lambda&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt;(Expression.AndAlso(left, right), parameter);</span><br><span class="line">        &#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title">ReplaceExpressionVisitor</span> : <span class="title">ExpressionVisitor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _oldValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _newValue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReplaceExpressionVisitor</span>(<span class="params">Expression oldValue, Expression newValue</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _oldValue = oldValue;</span><br><span class="line">        _newValue = newValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Expression <span class="title">Visit</span>(<span class="params">Expression? node</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == _oldValue)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> _newValue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.Visit(node)!;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>表达式短路,有意思</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id不会生效</span><br><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id会生效</span><br><span class="line"><span class="comment">--这里其实是通过IgnoreDeleteFilter来进行短路操作，默认为false sql：</span></span><br><span class="line"><span class="comment">--false</span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">false</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">false</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line"><span class="comment">--true </span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">true</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">true</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>dotnet</category>
+      </categories>
+      <tags>
+        <tag>dotnet</tag>
+        <tag>wtm</tag>
+        <tag>efcore</tag>
+        <tag>saas</tag>
+        <tag>多租户</tag>
+        <tag>EF数据过滤</tag>
       </tags>
   </entry>
   <entry>
@@ -1006,52 +1056,12 @@
 
 ]]></content>
       <categories>
-        <category>wtm</category>
+        <category>dotnet</category>
       </categories>
       <tags>
         <tag>dotnet</tag>
+        <tag>wtm</tag>
         <tag>日志</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>wtm多租户实现_增删改</title>
-    <url>/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E5%A2%9E%E5%88%A0%E6%94%B9/</url>
-    <content><![CDATA[<p>wtm源码解读_3.md 中数据补充有些其他问题。就是写代码的人不遵守wtm的原则来写可能会逃避掉数据补充方法。<br>我们这里处理的方式可能粗暴点，直接重写datacontext中SaveChanges()</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="built_in">int</span> <span class="title">SaveChanges</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 多端数据过滤判断</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode != <span class="string">&quot;0&quot;</span>)</span><br><span class="line">        UpdateTenantCode();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">base</span>.SaveChanges();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;<span class="built_in">int</span>&gt; <span class="title">SaveChangesAsync</span>(<span class="params">CancellationToken cancellationToken = <span class="literal">default</span>(CancellationToken</span>))</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//多端数据过滤判断</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(TenantCode) &amp;&amp; TenantCode != <span class="string">&quot;0&quot;</span>)</span><br><span class="line">        UpdateTenantCode();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> <span class="keyword">base</span>.SaveChangesAsync(cancellationToken);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">UpdateTenantCode</span>()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有新增、更新、删除的实体</span></span><br><span class="line">    <span class="keyword">var</span> entities = ChangeTracker.Entries().Where(u =&gt; u.State == EntityState.Added || u.State == EntityState.Modified || u.State == EntityState.Deleted);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> entity <span class="keyword">in</span> entities)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entity.Entity.GetType())</span><br><span class="line">            &amp;&amp; <span class="built_in">string</span>.IsNullOrEmpty((entity.Entity <span class="keyword">as</span> IHasTentant).TenantCode))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">switch</span> (entity.State)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 自动设置租户Id</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Added:</span><br><span class="line">                    entity.Property(<span class="keyword">nameof</span>(IHasTentant.TenantCode)).CurrentValue = TenantCode;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 排除租户Id</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Modified:</span><br><span class="line">                    entity.Property(<span class="keyword">nameof</span>(IHasTentant.TenantCode)).IsModified = <span class="literal">false</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 删除处理</span></span><br><span class="line">                <span class="keyword">case</span> EntityState.Deleted:</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>wtm</category>
-      </categories>
-      <tags>
-        <tag>dotnet</tag>
-        <tag>efcore</tag>
-        <tag>saas</tag>
-        <tag>多租户</tag>
-        <tag>EF数据过滤</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>wtm多租户实现_查询</title>
-    <url>/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/</url>
-    <content><![CDATA[<p>感谢：<a href="https://github.com/dotnetcore/sharding-core">说都不会话了(sharding-core作者)</a><br>参考：<a href="https://www.cnblogs.com/clis/"><img src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页"></a><a href="https://www.cnblogs.com/clis/p/16501586.html">芦荟柚子茶</a></p>
-<blockquote>
-<p>准确来说是EF的全局过滤器使用</p>
-</blockquote>
-<p>一直以来我是错的。DataContext的OnModelCreating其实是在初始化的时候执行。我还以为我每次调用db都会执行，唉~<br>TenantCode获取请看wtm源码解读1、2</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnModelCreating</span>(<span class="params">ModelBuilder modelBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 基本注册</span></span><br><span class="line">            <span class="comment">//builder.Entity&lt;TestDelete&gt;().HasQueryFilter(e =&gt; !e.IsDeleted);</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 获取model中的类获取程序集，因为model跟datacontext不在一个文件夹下</span></span><br><span class="line">            Assembly assembly = <span class="keyword">typeof</span>(AuditLog).Assembly;</span><br><span class="line">            <span class="comment">// 通过model获取所有的实体类，并进行过滤</span></span><br><span class="line">            List&lt;Type&gt; entityTypes = assembly.GetTypes()</span><br><span class="line">                .Where(t =&gt; t.IsSubclassOf(<span class="keyword">typeof</span>(BasePoco)) &amp;&amp; !t.IsAbstract)</span><br><span class="line">                .ToList();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获取ConfigureFilters方法</span></span><br><span class="line">            MethodInfo? configureFilters = <span class="keyword">typeof</span>(DataContext).GetMethod(</span><br><span class="line">                <span class="keyword">nameof</span>(ConfigureFilters),</span><br><span class="line">                BindingFlags.Instance | BindingFlags.NonPublic</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (configureFilters == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(<span class="keyword">nameof</span>(configureFilters));</span><br><span class="line">            <span class="comment">// 循环注册</span></span><br><span class="line">            <span class="keyword">foreach</span> (<span class="keyword">var</span> entityType <span class="keyword">in</span> entityTypes)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 注册实体</span></span><br><span class="line">                modelBuilder.Entity(entityType);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 注册筛选器</span></span><br><span class="line">                configureFilters</span><br><span class="line">                    .MakeGenericMethod(entityType)</span><br><span class="line">                    .Invoke(<span class="keyword">this</span>, <span class="keyword">new</span> <span class="built_in">object</span>[] &#123; modelBuilder, entityType &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 控制对象的是否忽略过滤，这句应该放在FrameworkContext中或者等级更高的基类中。</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">bool</span> IgnoreDeleteFilter &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拼接表达式对象，进行注册筛选器。</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">ConfigureFilters</span>&lt;<span class="title">TEntity</span>&gt;(<span class="params">ModelBuilder builder, Type entityType</span>)</span></span><br><span class="line"><span class="function">           <span class="keyword">where</span> TEntity : <span class="keyword">class</span></span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 剩下的是表达式树，我跟芦荟柚子茶一样，不太了解不敢乱说</span></span><br><span class="line">            <span class="comment">// 重要的概念是@说都不会话了 跟我说的关键信息：</span></span><br><span class="line">            <span class="comment">// 1.expression是延迟计算的</span></span><br><span class="line">            <span class="comment">// 2.e只要expression用了局部变量</span></span><br><span class="line">            <span class="comment">// 3.每次执行sql的时候局部变量是重新计算的</span></span><br><span class="line">            <span class="comment">// 表达式短路（第一次听别人说。还是得跟大佬多接触，新奇）</span></span><br><span class="line">            <span class="comment">// 在这还是非常感谢@说都不会话了</span></span><br><span class="line">            Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt;? expression = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IPersistPoco).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                expression = e =&gt; IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">bool</span>&gt;(e, <span class="string">&quot;IsValid&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span>(IHasTentant).IsAssignableFrom(entityType))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 表达式短路</span></span><br><span class="line">                Expression&lt;Func&lt;TEntity, <span class="built_in">bool</span>&gt;&gt; tenantExpression = e =&gt;IgnoreDeleteFilter || EF.Property&lt;<span class="built_in">string</span>&gt;(e, <span class="string">&quot;TenantCode&quot;</span>) == TenantCode;</span><br><span class="line">                expression = expression == <span class="literal">null</span> ? tenantExpression : CombineExpressions(expression, tenantExpression);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (expression == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">            builder.Entity&lt;TEntity&gt;().HasQueryFilter(expression);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="title">Expression</span>&lt;<span class="title">Func</span>&lt;<span class="title">T</span>, <span class="title">bool</span>&gt;&gt; <span class="title">CombineExpressions</span>&lt;<span class="title">T</span>&gt;(<span class="params">Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression1, Expression&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt; expression2</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> parameter = Expression.Parameter(<span class="keyword">typeof</span>(T));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> leftVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression1.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> left = leftVisitor.Visit(expression1.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> rightVisitor = <span class="keyword">new</span> ReplaceExpressionVisitor(expression2.Parameters[<span class="number">0</span>], parameter);</span><br><span class="line">            <span class="keyword">var</span> right = rightVisitor.Visit(expression2.Body);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> Expression.Lambda&lt;Func&lt;T, <span class="built_in">bool</span>&gt;&gt;(Expression.AndAlso(left, right), parameter);</span><br><span class="line">        &#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title">ReplaceExpressionVisitor</span> : <span class="title">ExpressionVisitor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _oldValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Expression _newValue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReplaceExpressionVisitor</span>(<span class="params">Expression oldValue, Expression newValue</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _oldValue = oldValue;</span><br><span class="line">        _newValue = newValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Expression <span class="title">Visit</span>(<span class="params">Expression? node</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (node == _oldValue)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> _newValue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.Visit(node)!;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>表达式短路,有意思</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id不会生效</span><br><span class="line"><span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">or</span> tenant_id<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> 租户id会生效</span><br><span class="line"><span class="comment">--这里其实是通过IgnoreDeleteFilter来进行短路操作，默认为false sql：</span></span><br><span class="line"><span class="comment">--false</span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">false</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">false</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line"><span class="comment">--true </span></span><br><span class="line"><span class="keyword">select</span> id,name,IsValid,TenantCode <span class="keyword">where</span> (<span class="literal">true</span> <span class="keyword">or</span> IsValid<span class="operator">=</span><span class="number">1</span>) <span class="keyword">and</span>  (<span class="literal">true</span> <span class="keyword">or</span> TenantCode<span class="operator">=</span><span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>wtm</category>
-      </categories>
-      <tags>
-        <tag>dotnet</tag>
-        <tag>efcore</tag>
-        <tag>saas</tag>
-        <tag>多租户</tag>
-        <tag>EF数据过滤</tag>
       </tags>
   </entry>
   <entry>
@@ -1071,32 +1081,11 @@
 </ol>
 ]]></content>
       <categories>
-        <category>wtm</category>
+        <category>dotnet</category>
       </categories>
       <tags>
         <tag>dotnet</tag>
-        <tag>efcore</tag>
-        <tag>saas</tag>
-        <tag>多租户</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>wtm源码解读_2</title>
-    <url>/2022/07/22/wtm%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB-2/</url>
-    <content><![CDATA[<h3 id="wtm第一次创建DC"><a href="#wtm第一次创建DC" class="headerlink" title="wtm第一次创建DC"></a>wtm第一次创建DC</h3><ol>
-<li><p>找到DC</p>
-<p>WTMContext.cs</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这个代码让我回到了19刚出来工作写的VB.net</span></span><br><span class="line"><span class="comment">// 具体不清楚为什么要这么写，可能是之前的代码懒得改。</span></span><br><span class="line"><span class="comment">// public IDataContext DC&#123;get;set;&#125; 有什么区别吗？大学老师也是这么教的。</span></span><br><span class="line"><span class="comment">// 大佬懂得求指教。</span></span><br><span class="line"><span class="keyword">private</span> IDataContext _dc;</span><br><span class="line"><span class="keyword">public</span> IDataContext DC</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">get</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_dc == <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            _dc = <span class="keyword">this</span>.CreateDC(); <span class="comment">// 进入话题，看CreateDC()</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _dc;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">set</span></span><br><span class="line">    &#123;</span><br><span class="line">        _dc = <span class="keyword">value</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>CreateDC()：这里贴的是最新版的代码</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> IDataContext <span class="title">CreateDC</span>(<span class="params"><span class="built_in">bool</span> isLog = <span class="literal">false</span>, <span class="built_in">string</span> cskey = <span class="literal">null</span>, <span class="built_in">bool</span> logerror = <span class="literal">true</span></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> cs = cskey ?? CurrentCS;</span><br><span class="line">    <span class="built_in">string</span> tenantCode = <span class="literal">null</span>;</span><br><span class="line">	<span class="comment">// 获取所有的租户</span></span><br><span class="line">    <span class="keyword">var</span> tenants = GlobaInfo.AllTenant ?? <span class="keyword">new</span> List&lt;FrameworkTenant&gt;();</span><br><span class="line">    <span class="built_in">string</span> tc = _loginUserInfo?.CurrentTenant;</span><br><span class="line">    <span class="comment">// 通过域名来获取租户</span></span><br><span class="line">    <span class="keyword">if</span> (tc == <span class="literal">null</span> &amp;&amp; HttpContext?.Request?.Host != <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                tc = tenants.Where(x =&gt; x.TDomain != <span class="literal">null</span> &amp;&amp; x.TDomain.ToLower() == HttpContext.Request.Host.ToString().ToLower()).Select(x =&gt; x.TCode).FirstOrDefault();</span><br><span class="line">            &#125;</span><br><span class="line">    <span class="comment">// 通过_loginUserInfo来获取租户，这里因该是考虑到域名下其他租户的登录</span></span><br><span class="line">    <span class="comment">// 我现在需要的就是这一步。_loginUserInfo.TenantCode已经有了，但是代入数据库，数据库初始化有点问题</span></span><br><span class="line">    <span class="keyword">if</span> (tc != <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> item = tenants.Where(x =&gt; x.TCode == tc).FirstOrDefault();</span><br><span class="line">                tenantCode = tc;</span><br><span class="line">                <span class="comment">//如果租户指定了数据库，则返回</span></span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">string</span>.IsNullOrEmpty(cs) &amp;&amp; item?.IsUsingDB == <span class="literal">true</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span> item.CreateDC(<span class="keyword">this</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (isLog == <span class="literal">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (ConfigInfo.Connections?.Where(x =&gt; x.Key.ToLower() == <span class="string">&quot;defaultlog&quot;</span>).FirstOrDefault() != <span class="literal">null</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    cs = <span class="string">&quot;defaultlog&quot;</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">string</span>.IsNullOrEmpty(cs))</span><br><span class="line">    &#123;</span><br><span class="line">        cs = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 在原来的代码里面没有上面的内容。这里就怎么说呢，讲究人做讲究事。哈哈</span></span><br><span class="line">    <span class="comment">// 我事直接通过CreateDC()传参来传递tenantCode，进而实例化</span></span><br><span class="line">    <span class="comment">// 这里就是比较优雅通过对象的来进行操作，后面我也该成这样了</span></span><br><span class="line">    <span class="keyword">var</span> rv = ConfigInfo.Connections.Where(x =&gt; x.Key.ToLower() == cs.ToLower()).FirstOrDefault().CreateDC();</span><br><span class="line">    rv.IsDebug = ConfigInfo.IsQuickDebug;</span><br><span class="line">    <span class="comment">// 设置tenantCode给DataContext _tenantCode赋值,这里成功把值传到dbcontext</span></span><br><span class="line">    rv.SetTenantCode(tenantCode);</span><br><span class="line">    <span class="keyword">if</span> (logerror == <span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rv.SetLoggerFactory(_loggerFactory);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> rv;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>wtm</category>
-      </categories>
-      <tags>
-        <tag>dotnet</tag>
+        <tag>wtm</tag>
         <tag>efcore</tag>
         <tag>saas</tag>
         <tag>多租户</tag>
@@ -1138,10 +1127,34 @@
 <p>这里已经看到了一部分的数据补充。但是感觉还是不全。这个我们项目中重写了SaveChanges(),详见《wtm多租户实现_增删改》.md</p>
 ]]></content>
       <categories>
-        <category>wtm</category>
+        <category>dotnet</category>
       </categories>
       <tags>
         <tag>dotnet</tag>
+        <tag>wtm</tag>
+        <tag>efcore</tag>
+        <tag>saas</tag>
+        <tag>多租户</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>wtm源码解读_2</title>
+    <url>/2022/07/22/wtm%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB-2/</url>
+    <content><![CDATA[<h3 id="wtm第一次创建DC"><a href="#wtm第一次创建DC" class="headerlink" title="wtm第一次创建DC"></a>wtm第一次创建DC</h3><ol>
+<li><p>找到DC</p>
+<p>WTMContext.cs</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这个代码让我回到了19刚出来工作写的VB.net</span></span><br><span class="line"><span class="comment">// 具体不清楚为什么要这么写，可能是之前的代码懒得改。</span></span><br><span class="line"><span class="comment">// public IDataContext DC&#123;get;set;&#125; 有什么区别吗？大学老师也是这么教的。</span></span><br><span class="line"><span class="comment">// 大佬懂得求指教。</span></span><br><span class="line"><span class="keyword">private</span> IDataContext _dc;</span><br><span class="line"><span class="keyword">public</span> IDataContext DC</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">get</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_dc == <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            _dc = <span class="keyword">this</span>.CreateDC(); <span class="comment">// 进入话题，看CreateDC()</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _dc;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">set</span></span><br><span class="line">    &#123;</span><br><span class="line">        _dc = <span class="keyword">value</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>CreateDC()：这里贴的是最新版的代码</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> IDataContext <span class="title">CreateDC</span>(<span class="params"><span class="built_in">bool</span> isLog = <span class="literal">false</span>, <span class="built_in">string</span> cskey = <span class="literal">null</span>, <span class="built_in">bool</span> logerror = <span class="literal">true</span></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> cs = cskey ?? CurrentCS;</span><br><span class="line">    <span class="built_in">string</span> tenantCode = <span class="literal">null</span>;</span><br><span class="line">	<span class="comment">// 获取所有的租户</span></span><br><span class="line">    <span class="keyword">var</span> tenants = GlobaInfo.AllTenant ?? <span class="keyword">new</span> List&lt;FrameworkTenant&gt;();</span><br><span class="line">    <span class="built_in">string</span> tc = _loginUserInfo?.CurrentTenant;</span><br><span class="line">    <span class="comment">// 通过域名来获取租户</span></span><br><span class="line">    <span class="keyword">if</span> (tc == <span class="literal">null</span> &amp;&amp; HttpContext?.Request?.Host != <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                tc = tenants.Where(x =&gt; x.TDomain != <span class="literal">null</span> &amp;&amp; x.TDomain.ToLower() == HttpContext.Request.Host.ToString().ToLower()).Select(x =&gt; x.TCode).FirstOrDefault();</span><br><span class="line">            &#125;</span><br><span class="line">    <span class="comment">// 通过_loginUserInfo来获取租户，这里因该是考虑到域名下其他租户的登录</span></span><br><span class="line">    <span class="comment">// 我现在需要的就是这一步。_loginUserInfo.TenantCode已经有了，但是代入数据库，数据库初始化有点问题</span></span><br><span class="line">    <span class="keyword">if</span> (tc != <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> item = tenants.Where(x =&gt; x.TCode == tc).FirstOrDefault();</span><br><span class="line">                tenantCode = tc;</span><br><span class="line">                <span class="comment">//如果租户指定了数据库，则返回</span></span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">string</span>.IsNullOrEmpty(cs) &amp;&amp; item?.IsUsingDB == <span class="literal">true</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span> item.CreateDC(<span class="keyword">this</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (isLog == <span class="literal">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (ConfigInfo.Connections?.Where(x =&gt; x.Key.ToLower() == <span class="string">&quot;defaultlog&quot;</span>).FirstOrDefault() != <span class="literal">null</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    cs = <span class="string">&quot;defaultlog&quot;</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">string</span>.IsNullOrEmpty(cs))</span><br><span class="line">    &#123;</span><br><span class="line">        cs = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 在原来的代码里面没有上面的内容。这里就怎么说呢，讲究人做讲究事。哈哈</span></span><br><span class="line">    <span class="comment">// 我事直接通过CreateDC()传参来传递tenantCode，进而实例化</span></span><br><span class="line">    <span class="comment">// 这里就是比较优雅通过对象的来进行操作，后面我也该成这样了</span></span><br><span class="line">    <span class="keyword">var</span> rv = ConfigInfo.Connections.Where(x =&gt; x.Key.ToLower() == cs.ToLower()).FirstOrDefault().CreateDC();</span><br><span class="line">    rv.IsDebug = ConfigInfo.IsQuickDebug;</span><br><span class="line">    <span class="comment">// 设置tenantCode给DataContext _tenantCode赋值,这里成功把值传到dbcontext</span></span><br><span class="line">    rv.SetTenantCode(tenantCode);</span><br><span class="line">    <span class="keyword">if</span> (logerror == <span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rv.SetLoggerFactory(_loggerFactory);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> rv;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>dotnet</category>
+      </categories>
+      <tags>
+        <tag>dotnet</tag>
+        <tag>wtm</tag>
         <tag>efcore</tag>
         <tag>saas</tag>
         <tag>多租户</tag>
@@ -1156,7 +1169,10 @@
 <p>ps:一部分源码是之前的版本，新版本代码我会说明</p>
 ]]></content>
       <categories>
-        <category>wtm</category>
+        <category>dotnet</category>
       </categories>
+      <tags>
+        <tag>wtm</tag>
+      </tags>
   </entry>
 </search>
