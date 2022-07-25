@@ -4,12 +4,13 @@ description: 本文介绍了如何在docker中部署私有化nuget。已经nuget
 author: wuxinheng
 date: 2022-07-15 20:48:00
 tags:
-- NuGet私有化
+- deploy
 - docker
 - dotnet
 - 批量上传nupkg
+- bat
 categories:
-- deploy
+- NuGet私有化
 ---
 
 > 私有化NuGet

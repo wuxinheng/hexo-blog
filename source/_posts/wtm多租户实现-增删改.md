@@ -8,8 +8,9 @@ tags:
   - 多租户
   - EF数据过滤
   - dotnet
-categories:
   - wtm
+categories:
+  - dotnet
 date: 2022-07-22 22:54:54
 ---
 wtm源码解读_3.md 中数据补充有些其他问题。就是写代码的人不遵守wtm的原则来写可能会逃避掉数据补充方法。

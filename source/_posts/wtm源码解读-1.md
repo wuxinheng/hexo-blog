@@ -8,8 +8,9 @@ tags:
 - saas
 - 多租户
 - dotnet
+- wtm
 categories:
-- wtm 
+- dotnet 
 ---
 ## wtm初始化激活
 

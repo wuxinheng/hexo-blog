@@ -5,9 +5,9 @@ date: 2022-07-18 23:37:38
 description: 本文从具体使用角度简单介绍了如何去使用docker-compose 部署项目和修改项目文件
 categories:
   - docker
-  - dotnet
 tags:
   - docker-compose
+  - dotnet
 ---
 
 ### 编写docker-compose.yml

@@ -7,9 +7,9 @@ tags:
 - nginx代理
 - nginx负载均衡
 - nginx配置ssl
-- docker
-categories:
 - nginx
+categories:
+- docker
 ---
 
 # Nginx 介绍

@@ -6,8 +6,9 @@ date: 2022-07-15 20:48:00
 tags:
 - mysql
 - 数据库
-categories:
 - deploy
+categories:
+- docker
 ---
 
 ### mysql 安装

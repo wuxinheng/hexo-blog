@@ -1,6 +1,6 @@
 
 ---
-title: docker-momeory
+title: 'docker-momeory'
 author: wuxinheng
 date: 2022-07-24 23:02:12
 description: docker容器的内存动态把控
@@ -8,8 +8,8 @@ categories:
   - docker
 tags:
   - momeory
+  - 容器内存控制
 ---
-
 
 ### docker内存控制
 

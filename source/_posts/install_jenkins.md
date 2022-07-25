@@ -9,7 +9,6 @@ tags:
   - 脚本
   - sh
   - deploy
-  - jenkis
 categories:
   - jenkins
 date: 2022-07-15 22:59:00

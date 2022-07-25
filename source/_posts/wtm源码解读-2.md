@@ -8,8 +8,9 @@ tags:
 - saas
 - 多租户
 - dotnet
-categories:
 - wtm
+categories:
+- dotnet
 ---
 ### wtm第一次创建DC
 

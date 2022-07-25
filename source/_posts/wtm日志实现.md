@@ -6,8 +6,9 @@ description: 实现自己的系统日志
 tags:
 - 日志
 - dotnet
-categories:
 - wtm
+categories:
+- dotnet
 ---
 ## wtm日志实现
 

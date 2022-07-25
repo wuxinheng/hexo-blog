@@ -8,8 +8,9 @@ tags:
   - 多租户
   - EF数据过滤
   - dotnet
-categories:
   - wtm
+categories:
+  - dotnet
 date: 2022-07-22 22:54:39
 ---
 感谢：[说都不会话了(sharding-core作者)](https://github.com/dotnetcore/sharding-core)

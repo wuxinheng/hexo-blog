@@ -5,12 +5,12 @@ author: wuxinheng
 date: 2022-07-15 20:48:00
 tags:
 - elk
-- dotnet
 - elasticsearch
 - elastic
 - Kibana
-categories:
 - deploy
+categories:
+- docker
 ---
 
 ### ELK 安装

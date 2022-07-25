@@ -4,7 +4,8 @@ description: linux 虚拟机没有ens33网卡信息，重启网络服务解决
 author: wuxinheng
 tags:
   - 虚拟机网络
-categories: []
+categories: 
+  - 虚拟机
 date: 2022-07-19 21:36:00
 ---
 使用ifconfig遇到没有ens33网络信息

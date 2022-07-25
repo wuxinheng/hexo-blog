@@ -4,14 +4,15 @@ author: wuxinheng
 description: 本文说明了dotnet快速开发框架wtm如何在docker中部署，以及项目文件结构变化大之后Dockerfile应该如何更改，验证码无法显示、指定nuget源等问题具体解决办法。
 date: 2022-07-15 20:48:00
 tags:
-- docker部署wtm
+- docker
 - wtm
 - dotnet
 - linux验证码
 - gdip
 - System.Drawing 兼容问题
-categories:
 - deploy
+categories:
+- dotnet
 ---
 
 #### 拉取镜像

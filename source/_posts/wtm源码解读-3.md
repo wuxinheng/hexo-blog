@@ -8,8 +8,9 @@ tags:
 - saas
 - 多租户
 - dotnet
-categories:
 - wtm
+categories:
+- dotnet
 ---
 wtm根据模型会生成一下几个vm对象，vm可能就是mvc、mvvm、里面的模型、试图。
 这里可以简单理解为支撑视图的基本类
