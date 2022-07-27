@@ -1,5 +1,5 @@
 ---
-title: .Net Core Api 自动不充Result中包含的枚举Display、AttributeMode等说明性文字信息字段
+title: .Net Core Api 自动不充Result中包含的枚举Display、Description等说明性文字信息字段
 author: wuxinheng
 date: 2022-07-27 17:47:04
 description: 代码片段
@@ -25,7 +25,7 @@ using System.Reflection;
 namespace WebApplication
 {
     /// <summary>
-    /// .Net Core Api 自动不充Result中包含的枚举Display、AttributeMode等说明性文字信息字段
+    /// .Net Core Api 自动不充Result中包含的枚举Display、Description等说明性文字信息字段
     /// 字段命名规则为Property+Text,如果存在将会跳过,
     /// </summary>
     public static class ResultTextAutoCompletion
