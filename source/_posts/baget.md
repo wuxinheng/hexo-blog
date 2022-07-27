@@ -6,11 +6,12 @@ date: 2022-07-15 20:48:00
 tags:
 - deploy
 - docker
-- dotnet
 - 批量上传nupkg
 - bat
-categories:
 - NuGet私有化
+- dotnet
+categories:
+- dotnet
 ---
 
 > 私有化NuGet
