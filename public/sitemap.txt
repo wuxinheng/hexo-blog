@@ -1,6 +1,6 @@
-https://xblogs.net/2022/08/02/grpc/
 https://xblogs.net/2022/08/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE-%E7%AE%A1%E9%81%93/
 https://xblogs.net/2022/07/27/ResultTextAutoCompletion/
+https://xblogs.net/2022/08/02/grpc/
 https://xblogs.net/2022/07/15/baget/
 https://xblogs.net/2022/07/15/wtm/
 https://xblogs.net/2022/07/22/wtm%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%AE%9E%E7%8E%B0-%E6%9F%A5%E8%AF%A2/
@@ -81,7 +81,7 @@ https://xblogs.net/tags/saas/
 https://xblogs.net/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/
 https://xblogs.net/tags/EF%E6%95%B0%E6%8D%AE%E8%BF%87%E6%BB%A4/
 https://xblogs.net/tags/%E6%97%A5%E5%BF%97/
-https://xblogs.net/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/
+https://xblogs.net/tags/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/
 https://xblogs.net/categories/dotnet/
 https://xblogs.net/categories/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/
 https://xblogs.net/categories/docker/

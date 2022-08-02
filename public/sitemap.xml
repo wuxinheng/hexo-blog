@@ -2,15 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://xblogs.net/2022/08/02/grpc/</loc>
-    
-    <lastmod>2022-08-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://xblogs.net/2022/08/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE-%E7%AE%A1%E9%81%93/</loc>
     
     <lastmod>2022-08-02</lastmod>
@@ -22,7 +13,16 @@
   <url>
     <loc>https://xblogs.net/2022/07/27/ResultTextAutoCompletion/</loc>
     
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/08/02/grpc/</loc>
+    
+    <lastmod>2022-08-02</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -645,7 +645,7 @@
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</loc>
+    <loc>https://xblogs.net/tags/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/</loc>
     <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
