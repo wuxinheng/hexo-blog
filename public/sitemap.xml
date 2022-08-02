@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://xblogs.net/2022/08/02/grpc/</loc>
+    
+    <lastmod>2022-08-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/2022/08/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE-%E7%AE%A1%E9%81%93/</loc>
+    
+    <lastmod>2022-08-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://xblogs.net/2022/07/27/ResultTextAutoCompletion/</loc>
     
     <lastmod>2022-07-27</lastmod>
@@ -256,372 +274,379 @@
 
   <url>
     <loc>https://xblogs.net/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://xblogs.net/tags/%E6%88%91%E7%88%B1%E5%86%99%E4%BB%A3%E7%A0%81/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/dotnet/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://xblogs.net/tags/deploy/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/docker/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E6%89%B9%E9%87%8F%E4%B8%8A%E4%BC%A0nupkg/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/bat/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/NuGet%E7%A7%81%E6%9C%89%E5%8C%96/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/docker-machine/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <loc>https://xblogs.net/tags/dotnet/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/%E7%94%B5%E8%84%91%E5%BC%80%E5%90%AF%E8%99%9A%E6%8B%9F%E6%8D%A2CPU/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/VT-x/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/VT-d/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/vm/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <loc>https://xblogs.net/tags/%E6%88%91%E7%88%B1%E5%86%99%E4%BB%A3%E7%A0%81/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/momeory/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E5%AE%B9%E5%99%A8%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/docker-compose/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/docker-pack/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/docker-swarm/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/docker-machine/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E7%94%B5%E8%84%91%E5%BC%80%E5%90%AF%E8%99%9A%E6%8B%9F%E6%8D%A2CPU/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/VT-x/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/VT-d/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/vm/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/elk/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/elasticsearch/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/elastic/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/Kibana/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/jenkins/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/shell/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E8%84%9A%E6%9C%AC/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/sh/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/CI-CD/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/docker%E6%9E%84%E5%BB%BAjenkins/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/jenkis%E9%83%A8%E7%BD%B2-netcore/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/jenkis%E9%83%A8%E7%BD%B2uniapp/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/uniapp%E8%87%AA%E5%8A%A8%E6%8E%A8%E9%80%81%E5%BE%AE%E4%BF%A1/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/jenkis/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/tags/consul/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/ocelot/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/nginx/</loc>
-    <lastmod>2022-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://xblogs.net/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <loc>https://xblogs.net/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/mysql/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/consul/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/ocelot/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/nginx/</loc>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/nginx%E4%BB%A3%E7%90%86/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/nginx%E9%85%8D%E7%BD%AEssl/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/wtm/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/linux%E9%AA%8C%E8%AF%81%E7%A0%81/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/gdip/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/System-Drawing-%E5%85%BC%E5%AE%B9%E9%97%AE%E9%A2%98/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/efcore/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/saas/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/EF%E6%95%B0%E6%8D%AE%E8%BF%87%E6%BB%A4/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/tags/%E6%97%A5%E5%BF%97/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -629,43 +654,50 @@
 
   
   <url>
-    <loc>https://xblogs.net/categories/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <loc>https://xblogs.net/categories/dotnet/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xblogs.net/categories/dotnet/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <loc>https://xblogs.net/categories/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/categories/docker/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/categories/jenkins/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/categories/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://xblogs.net/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</loc>
-    <lastmod>2022-07-27</lastmod>
+    <lastmod>2022-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://xblogs.net/categories/grpc/</loc>
+    <lastmod>2022-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>

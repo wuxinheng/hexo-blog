@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#50616d" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#50616d" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#50616d">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xblogs.net","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.12.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="我个人在使用上而言，grpc、webapi、webservice、wcf这几个的区别。grpc可能更倾向内网，采用http2更安全。唯一不方便的地方是.proto文件共享的问题。webapi，遵循http规范。get、post、delete、put,然而这些是webservice缺少的。wcf跟grpc很相似。多语言之间的共同性都是通过协议来实现相关类。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="grpc">
+<meta property="og:url" content="https://xblogs.net/2022/08/02/grpc/index.html">
+<meta property="og:site_name" content="xblogs">
+<meta property="og:description" content="我个人在使用上而言，grpc、webapi、webservice、wcf这几个的区别。grpc可能更倾向内网，采用http2更安全。唯一不方便的地方是.proto文件共享的问题。webapi，遵循http规范。get、post、delete、put,然而这些是webservice缺少的。wcf跟grpc很相似。多语言之间的共同性都是通过协议来实现相关类。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-02T06:37:01.000Z">
+<meta property="article:modified_time" content="2022-08-02T06:39:41.279Z">
+<meta property="article:author" content="wuxinheng">
+<meta property="article:tag" content="dotnet">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xblogs.net/2022/08/02/grpc/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xblogs.net/2022/08/02/grpc/","path":"2022/08/02/grpc/","title":"grpc"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>grpc | xblogs</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="xblogs" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xblogs</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">随便写写</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">7</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">25</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wuxinheng"
+      src="/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">wuxinheng</p>
+  <div class="site-description" itemprop="description">不积硅步无以至千里,不积小流无以成江海</div>
+</div>
+  <div class="site-state-wrap site-overview-item animated">
+    <nav class="site-state">
+        <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+            <span class="site-state-item-count">25</span>
+            <span class="site-state-item-name">日志</span>
+          </a>
+        </div>
+        <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+            <span class="site-state-item-count">7</span>
+            <span class="site-state-item-name">分类</span>
+            </a>
+          
+        </div>
+        <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+            <span class="site-state-item-count">53</span>
+            <span class="site-state-item-name">标签</span>
+            </a>
+          
+        </div>
+    </nav>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wuxinheng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wuxinheng" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:17629957093@163.com" title="E-Mail → mailto:17629957093@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/wuxinheng" title="gitee → https:&#x2F;&#x2F;gitee.com&#x2F;wuxinheng" rel="noopener" target="_blank"><i class="fab fa-git fa-fw"></i>gitee</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa-solid fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xblogs.net/2022/08/02/grpc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jpg">
+      <meta itemprop="name" content="wuxinheng">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xblogs">
+      <meta itemprop="description" content="不积硅步无以至千里,不积小流无以成江海">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="grpc | xblogs">
+      <meta itemprop="description" content="我个人在使用上而言，grpc、webapi、webservice、wcf这几个的区别。grpc可能更倾向内网，采用http2更安全。唯一不方便的地方是.proto文件共享的问题。webapi，遵循http规范。get、post、delete、put,然而这些是webservice缺少的。wcf跟grpc很相似。多语言之间的共同性都是通过协议来实现相关类。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          grpc
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-08-02 14:37:01 / 修改时间：14:39:41" itemprop="dateCreated datePublished" datetime="2022-08-02T14:37:01+08:00">2022-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/grpc/" itemprop="url" rel="index"><span itemprop="name">grpc</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">我个人在使用上而言，grpc、webapi、webservice、wcf这几个的区别。grpc可能更倾向内网，采用http2更安全。唯一不方便的地方是.proto文件共享的问题。webapi，遵循http规范。get、post、delete、put,然而这些是webservice缺少的。wcf跟grpc很相似。多语言之间的共同性都是通过协议来实现相关类。</div>
+          <span  title="post.wordcount">
+            694 字
+          </span>
+          <span title="post.min2read">
+            3 分钟
+          </span>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>grpc</p>
+<blockquote>
+<p>我个人在使用上而言，grpc、webapi、webservice、wcf这几个的区别。<br>grpc可能更倾向内网，采用http2更安全。唯一不方便的地方是.proto文件共享的问题<br>webapi，遵循http规范。get、post、delete、put,然而这些是webservice缺少的。<br>wcf跟grpc很相似。多语言之间的共同性都是通过协议来实现相关类。</p>
+</blockquote>
+<p>1.新建 <code>ASP.NET Core gRPC 服务</code></p>
+<p>2.项目文件中默认有个<code>Protos</code>文件夹，文件夹中默认有一个<code>.proto</code>文件</p>
+<p>3.<code>.proto</code>可以理解问接口文件或者定义文件。其他语言也是通过<code>.proto</code>文件来使用<code>grpc</code></p>
+<p>4.<code>.proto</code>在项目中默认会生成一个类里面是当前语言的定义。也是我们要使用的基类</p>
+<p>5.如果需要自己重新实现代码。就需要自己重新这个方法。</p>
+<p>服务端 .proto示例</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>; <span class="comment">//版本</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/protobuf/empty.proto&quot;</span>;  <span class="comment">// google.protobuf.Empty 定义文件</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">option</span> csharp_namespace = <span class="string">&quot;Demo_GrpcService&quot;</span>;  <span class="comment">// 命名空间</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> tmessage; <span class="comment">// 类</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 服务定义</span></span><br><span class="line"><span class="keyword">service </span><span class="title class_">MessageService</span> &#123;</span><br><span class="line">  <span class="comment">// 方法定义</span></span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Add (MessageRequest) <span class="keyword">returns</span> (MessageResult)</span>;</span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Update (MessageRequest) <span class="keyword">returns</span> (MessageResult)</span>;</span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Delete (MessageRequest) <span class="keyword">returns</span> (MessageResult)</span>;</span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Query(MessageRequest) <span class="keyword">returns</span> (MessageResult)</span>;</span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Test (google.protobuf.Empty) <span class="keyword">returns</span> (google.protobuf.Empty)</span>; <span class="comment">// 无参，无返</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求体</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">MessageRequest</span></span><br><span class="line">&#123;</span><br><span class="line">		<span class="type">string</span> Content =<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 返回体</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">MessageResult</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">string</span> Msg =<span class="number">1</span>;</span><br><span class="line">	<span class="type">string</span> Code =<span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端也是一样的，但是不同的地方是项目文件中的配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ItemGroup</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--.proto文件路径，当前grpc的声明Server、Client--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Protobuf</span> <span class="attr">Include</span>=<span class="string">&quot;Protos\message.proto&quot;</span> <span class="attr">GrpcServices</span>=<span class="string">&quot;Server&quot;</span> /&gt;</span>  </span><br><span class="line">  <span class="tag">&lt;<span class="name">Protobuf</span> <span class="attr">Include</span>=<span class="string">&quot;Protos\greet.proto&quot;</span> <span class="attr">GrpcServices</span>=<span class="string">&quot;Server&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ItemGroup</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>控制台使用grpc服务</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            AppContext.SetSwitch(<span class="string">&quot;System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport&quot;</span>, <span class="literal">true</span>); <span class="comment">// 允许https未加密的支持</span></span><br><span class="line">            <span class="built_in">string</span> url = <span class="string">&quot;http://localhost:5054&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//string url = &quot;https://localhost:7054&quot;;</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">using</span> (<span class="keyword">var</span> channel = GrpcChannel.ForAddress(url))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> client = <span class="keyword">new</span> MessageService.MessageServiceClient(channel);</span><br><span class="line">                <span class="keyword">var</span> reply = client.Add(<span class="keyword">new</span> MessageRequest()</span><br><span class="line">                &#123;</span><br><span class="line">                    Content = <span class="string">&quot;ceshi&quot;</span></span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">                Console.WriteLine(<span class="string">$&quot;结果:<span class="subst">&#123;reply.Code&#125;</span>,message:<span class="subst">&#123;reply.Msg&#125;</span>&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>webapi使用grpc</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    services.AddControllers();</span><br><span class="line">    services.AddSwaggerGen(c =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        c.SwaggerDoc(<span class="string">&quot;v1&quot;</span>, <span class="keyword">new</span> OpenApiInfo &#123; Title = <span class="string">&quot;WebApplication&quot;</span>, Version = <span class="string">&quot;v1&quot;</span> &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    services.AddGrpcClient&lt;MessageService.MessageServiceClient&gt;(options =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        options.Address = <span class="keyword">new</span> Uri(<span class="string">&quot;https://localhost:7054&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>控制器</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">ApiController</span>]</span><br><span class="line">[<span class="meta">Route(<span class="string">&quot;[controller]&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">WeatherForecastController</span> : <span class="title">ControllerBase</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">string</span>[] Summaries = <span class="keyword">new</span>[]</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;Freezing&quot;</span>, <span class="string">&quot;Bracing&quot;</span>, <span class="string">&quot;Chilly&quot;</span>, <span class="string">&quot;Cool&quot;</span>, <span class="string">&quot;Mild&quot;</span>, <span class="string">&quot;Warm&quot;</span>, <span class="string">&quot;Balmy&quot;</span>, <span class="string">&quot;Hot&quot;</span>, <span class="string">&quot;Sweltering&quot;</span>, <span class="string">&quot;Scorching&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;WeatherForecastController&gt; _logger;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> MessageService.MessageServiceClient _messageService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeatherForecastController</span>(<span class="params">ILogger&lt;WeatherForecastController&gt; logger, </span></span></span><br><span class="line"><span class="params"><span class="function">                                     MessageService.MessageServiceClient messageService = <span class="literal">null</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _logger = logger;</span><br><span class="line">        _messageService = messageService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    [<span class="meta">HttpGet</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IEnumerable&lt;WeatherForecast&gt; <span class="title">Get</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">var</span> s=   _messageService.Add(<span class="keyword">new</span> MessageRequest() &#123; Content=<span class="string">&quot;api调用grpc&quot;</span>&#125;);</span><br><span class="line">        <span class="keyword">var</span> rng = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">return</span> Enumerable.Range(<span class="number">1</span>, <span class="number">5</span>).Select(index =&gt; <span class="keyword">new</span> WeatherForecast</span><br><span class="line">        &#123;</span><br><span class="line">            Date = DateTime.Now.AddDays(index),</span><br><span class="line">            TemperatureC = rng.Next(<span class="number">-20</span>, <span class="number">55</span>),</span><br><span class="line">            Summary = Summaries[rng.Next(Summaries.Length)]</span><br><span class="line">        &#125;)</span><br><span class="line">        .ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>文档：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/aspnet/core/grpc/clientfactory?view=aspnetcore-6.0">.NET 中的 gRPC 客户端工厂集成 | Microsoft Docs</a></p>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:16px;font-family: cursive;">-------------纸短情长 <i class="fa fa-umbrella"></i> 下次再见-------------</div>
+    
+</div>
+      
+    </div>
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="wuxinheng 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="wuxinheng 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/dotnet/" rel="tag"><i class="fa fa-tag"></i>
+                dotnet</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE-%E7%AE%A1%E9%81%93/" rel="prev" title="设计模式-责任链-管道">
+                  <i class="fa fa-chevron-left"></i>
+                  设计模式-责任链-管道
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuxinheng</span>
+  <span class="icp" itemprop="copyrightHolder">豫ICP备2021025081号 </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
